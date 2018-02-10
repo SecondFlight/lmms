@@ -151,30 +151,6 @@ void VstPlugin::tryLoad( const QString &remoteVstPluginExecutable )
 
 
 
-void VstPlugin::hideEditor()
-{
-	QWidget * w = editor();
-	if( w )
-	{
-		w->hide();
-	}
-}
-
-
-
-
-void VstPlugin::toggleEditor()
-{
-	QWidget * w = editor();
-	if( w )
-	{
-		w->setVisible( !w->isVisible() );
-	}
-}
-
-
-
-
 void VstPlugin::loadSettings( const QDomElement & _this )
 {
 	const int num_params = _this.attribute( "numparams" ).toInt();
@@ -254,7 +230,7 @@ void VstPlugin::toggleUI()
 	}
 	else if (pluginWidget())
 	{
-		toggleEditor();
+		toggleEditorVisibility();
 	}
 }
 
@@ -541,14 +517,8 @@ void VstPlugin::showUI()
 	{
 		if (! editor()) {
 			qWarning() << "VstPlugin::showUI called before VstPlugin::createUI";
-			return;
 		}
-
-		QWidget * w = editor();
-		if( w )
-		{
-			w->show();
-		}
+		toggleEditorVisibility( true );
 	}
 }
 
@@ -560,7 +530,7 @@ void VstPlugin::hideUI()
 	}
 	else if ( pluginWidget() != nullptr )
 	{
-		hideEditor();
+		toggleEditorVisibility( false );
 	}
 }
 
@@ -613,6 +583,19 @@ QByteArray VstPlugin::saveChunk()
 	}
 
 	return a;
+}
+
+void VstPlugin::toggleEditorVisibility( int visible )
+{
+	QWidget* w = editor();
+	if ( ! w ) {
+		return;
+	}
+
+	if ( visible < 0 ) {
+		visible = ! w->isVisible();
+	}
+	w->setVisible( visible );
 }
 
 void VstPlugin::createUI( QWidget * parent )
