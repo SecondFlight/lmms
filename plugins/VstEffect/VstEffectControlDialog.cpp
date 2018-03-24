@@ -47,7 +47,8 @@ VstEffectControlDialog::VstEffectControlDialog( VstEffectControls * _ctl ) :
 	m_pluginWidget( NULL ),
 
 	m_plugin( NULL ),
-	tbLabel( NULL )
+	tbLabel( NULL ),
+	m_needsEmbed( false )
 {
 	QGridLayout * l = new QGridLayout( this );
 	l->setContentsMargins( 10, 10, 10, 10 );
@@ -61,6 +62,7 @@ VstEffectControlDialog::VstEffectControlDialog( VstEffectControls * _ctl ) :
 	{
 		m_plugin = _ctl->m_effect->m_plugin;
 		embed_vst = m_plugin->embedMethod() != "none";
+		m_needsEmbed = embed_vst;
 
 		if (embed_vst) {
 			if (! m_plugin->pluginWidget()) {
@@ -232,9 +234,11 @@ VstEffectControlDialog::VstEffectControlDialog( VstEffectControls * _ctl ) :
 		l->addItem( new QSpacerItem( newSize - 20, 30, QSizePolicy::Fixed,
 						QSizePolicy::Fixed ), 1, 0 );
 		l->addWidget( resize, 2, 0, 1, 1, Qt::AlignCenter );
+#if !(defined(LMMS_BUILD_LINUX) && QT_VERSION < 0x050000)
 		if (embed_vst) {
 			l->addWidget( m_pluginWidget, 3, 0, 1, 1, Qt::AlignCenter );
 		}
+#endif
 		l->setRowStretch( 5, 1 );
 		l->setColumnStretch( 1, 1 );
 
@@ -272,6 +276,17 @@ void VstEffectControlDialog::paintEvent( QPaintEvent * )
 }
 
 
+#if defined(LMMS_BUILD_LINUX) && QT_VERSION < 0x050000
+void VstEffectControlDialog::showEvent( QShowEvent * )
+{
+	if( m_needsEmbed )
+	{
+		m_needsEmbed = false;
+		static_cast<QGridLayout *>( layout() )->addWidget(
+			m_pluginWidget, 3, 0, 1, 1, Qt::AlignCenter );
+	}
+}
+#endif
 
 
 VstEffectControlDialog::~VstEffectControlDialog()

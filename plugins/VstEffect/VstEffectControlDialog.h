@@ -32,6 +32,9 @@
 #include <QPainter>
 #include <QLabel>
 #include <QSharedPointer>
+#if defined(LMMS_BUILD_LINUX) && QT_VERSION < 0x050000
+#	include <QShowEvent>
+#endif
 
 
 class VstEffectControls;
@@ -50,6 +53,9 @@ public:
 
 protected:
 	virtual void paintEvent( QPaintEvent * _pe );
+#if defined(LMMS_BUILD_LINUX) && QT_VERSION < 0x050000
+	virtual void showEvent( QShowEvent * _se );
+#endif
 
 private:
 	QWidget * m_pluginWidget;
@@ -64,6 +70,8 @@ private:
 	QSharedPointer<VstPlugin> m_plugin;
 
 	QLabel * tbLabel;
+
+	bool m_needsEmbed;
 
 public slots:
 	void togglePluginUI( bool checked );
