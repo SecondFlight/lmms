@@ -81,9 +81,12 @@ VstEffectControlDialog::VstEffectControlDialog( VstEffectControls * _ctl ) :
 		if (embed_vst) {
 			btn->setCheckable( true );
 			btn->setChecked( true );
-		}
-		connect( btn, SIGNAL( toggled( bool ) ),
+			connect( btn, SIGNAL( toggled( bool ) ),
 					SLOT( togglePluginUI( bool ) ) );
+		} else {
+			connect( btn, SIGNAL( clicked() ),
+					m_plugin.data(), SLOT( toggleUI() ) );
+		}
 
 		btn->setMinimumWidth( 78 );
 		btn->setMaximumWidth( 78 );
