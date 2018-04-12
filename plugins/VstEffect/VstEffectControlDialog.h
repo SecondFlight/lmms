@@ -31,7 +31,7 @@
 #include <QObject>
 #include <QPainter>
 #include <QLabel>
-#include <QSharedPointer>
+#include <QPointer>
 #if defined(LMMS_BUILD_LINUX) && QT_VERSION < 0x050000
 #	include <QShowEvent>
 #endif
@@ -67,7 +67,7 @@ private:
 	PixmapButton * m_managePluginButton;
 	PixmapButton * m_savePresetButton;
 
-	QSharedPointer<VstPlugin> m_plugin;
+	QPointer<VstPlugin> m_plugin;
 
 	QLabel * tbLabel;
 

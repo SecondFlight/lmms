@@ -60,7 +60,7 @@ VstEffectControlDialog::VstEffectControlDialog( VstEffectControls * _ctl ) :
 	if( _ctl != NULL && _ctl->m_effect != NULL &&
 					_ctl->m_effect->m_plugin != NULL )
 	{
-		m_plugin = _ctl->m_effect->m_plugin;
+		m_plugin = _ctl->m_effect->m_plugin.data();
 		embed_vst = m_plugin->embedMethod() != "none";
 		m_needsEmbed = embed_vst;
 
@@ -85,7 +85,7 @@ VstEffectControlDialog::VstEffectControlDialog( VstEffectControls * _ctl ) :
 					SLOT( togglePluginUI( bool ) ) );
 		} else {
 			connect( btn, SIGNAL( clicked() ),
-					m_plugin.data(), SLOT( toggleUI() ) );
+					m_plugin, SLOT( toggleUI() ) );
 		}
 
 		btn->setMinimumWidth( 78 );
