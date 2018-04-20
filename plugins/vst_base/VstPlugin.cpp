@@ -324,6 +324,16 @@ bool VstPlugin::processMessage( const message & _m )
 
 	case IdVstPluginWindowID:
 		m_pluginWindowID = _m.getInt();
+#ifdef LMMS_BUILD_WIN32
+		if( m_embedMethod == "none" )
+		{
+			// We're changing the owner, not the parent,
+			// so this is legal despite MSDN's warning
+			SetWindowLongPtr( (HWND)(intptr_t) m_pluginWindowID,
+					GWLP_HWNDPARENT,
+					(LONG_PTR) gui->mainWindow()->winId() );
+		}
+#endif
 		break;
 
 	case IdVstPluginEditorGeometry:
