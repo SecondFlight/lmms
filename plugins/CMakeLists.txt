@@ -52,6 +52,7 @@ IF("${PLUGIN_LIST}" STREQUAL "")
 		dynamics_processor
 		Eq
 		Flanger
+		GuiTest
 		HydrogenImport
 		ladspa_browser
 		LadspaEffect
