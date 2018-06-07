@@ -39,8 +39,14 @@ void ModernKnob::paintEvent(QPaintEvent *event)
 {
 	QPainter m_canvas(this);
 
-	QRectF rectangle(10.0, 20.0, 80.0, 60.0);
-	m_canvas.drawEllipse(rectangle);
+	m_canvas.setRenderHint(QPainter::RenderHint::Antialiasing);
+
+	QPen pen = QPen(QColor(26, 218, 225));
+	pen.setWidthF(3.3);
+	m_canvas.setPen(pen);
+
+	QRectF rectangle = QRectF(QPointF(1.5, 1.5), QSizeF(width()-3, height()-3));
+	m_canvas.drawArc(rectangle, -(360*16*3)/20, (360*16*8)/10);
 
 	m_canvas.setBackground(QBrush(QColor(255, 0, 0)));
 }

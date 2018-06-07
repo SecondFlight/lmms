@@ -41,7 +41,9 @@ GuiTestControlDialog::GuiTestControlDialog(GuiTestControls *controls):
 
 	setFixedSize(1200, 580);
 	ModernKnob* knob = new ModernKnob(this);
-	knob->setMaximumSize(350, 350);
+	knob->setMaximumSize(35, 35);
+	knob->setMinimumSize(35, 35);
+	knob->adjustSize();
 	knob->move(QPoint(100, 100));
 	knob->update();
 }
