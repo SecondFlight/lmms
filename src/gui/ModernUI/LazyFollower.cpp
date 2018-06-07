@@ -1,7 +1,8 @@
 /*
- * GuiTestControlDialog.cpp - A simple little plugin for testing the Modern UI
+ * LazyFollower.cpp - A utility to help implement UI smoothing
  *
  * Copyright (c) 2018 Joshua Wade <lastname/firstinitial/at/southern/dot/edu>
+ *
  *
  * This file is part of LMMS - https://lmms.io
  *
@@ -21,27 +22,3 @@
  * Boston, MA 02110-1301 USA.
  *
  */
-
-#include <QLayout>
-
-#include "GuiTestControlDialog.h"
-#include "GuiTestControls.h"
-#include "embed.h"
-#include "../../src/gui/ModernUI/ModernKnob.h" // oops
-
-
-GuiTestControlDialog::GuiTestControlDialog(GuiTestControls *controls):
-	EffectControlDialog(controls)
-{
-	setAutoFillBackground(true);
-
-	QPalette pal;
-	pal.setColor(QPalette::ColorRole::Background, QColor(52, 62, 74));
-	setPalette( pal );
-
-	setFixedSize(1200, 580);
-	ModernKnob* knob = new ModernKnob(this);
-	knob->setMaximumSize(350, 350);
-	knob->move(QPoint(100, 100));
-	knob->update();
-}

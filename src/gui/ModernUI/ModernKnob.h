@@ -1,7 +1,8 @@
 /*
- * GuiTestControlDialog.cpp - A simple little plugin for testing the Modern UI
+ * ModernKnob.h - A knob widget for the Modern UI
  *
  * Copyright (c) 2018 Joshua Wade <lastname/firstinitial/at/southern/dot/edu>
+ *
  *
  * This file is part of LMMS - https://lmms.io
  *
@@ -22,26 +23,30 @@
  *
  */
 
-#include <QLayout>
 
-#include "GuiTestControlDialog.h"
-#include "GuiTestControls.h"
-#include "embed.h"
-#include "../../src/gui/ModernUI/ModernKnob.h" // oops
+#ifndef MODERNKNOB_H
+#define MODERNKNOB_H
+
+#include <QWidget>
+#include <QPainter>
+
+//#include "templates.h"
 
 
-GuiTestControlDialog::GuiTestControlDialog(GuiTestControls *controls):
-	EffectControlDialog(controls)
+class /*EXPORT*/ ModernKnob : public QWidget//, public FloatModelView
 {
-	setAutoFillBackground(true);
+	Q_OBJECT
 
-	QPalette pal;
-	pal.setColor(QPalette::ColorRole::Background, QColor(52, 62, 74));
-	setPalette( pal );
+public:
+	ModernKnob(QWidget * _parent = NULL, const QString & _name = QString());
+	virtual ~ModernKnob();
 
-	setFixedSize(1200, 580);
-	ModernKnob* knob = new ModernKnob(this);
-	knob->setMaximumSize(350, 350);
-	knob->move(QPoint(100, 100));
-	knob->update();
-}
+protected:
+	virtual void paintEvent(QPaintEvent * event);
+
+private:
+	int m_size;
+	QPainter m_canvas;
+};
+
+#endif

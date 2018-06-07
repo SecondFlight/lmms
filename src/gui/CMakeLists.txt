@@ -88,6 +88,9 @@ SET(LMMS_SRCS
 	gui/widgets/TrackRenameLineEdit.cpp
 	gui/widgets/VisualizationWidget.cpp
 
+	gui/ModernUI/LazyFollower.cpp
+	gui/ModernUI/ModernKnob.cpp
+
 	PARENT_SCOPE
 )
 
