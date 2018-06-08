@@ -28,7 +28,8 @@
 ModernKnob::ModernKnob(QWidget * _parent, const QString & _name):
 	QWidget( _parent )
 {
-
+	m_value = 0.5;
+	m_mousePressed = false;
 }
 
 ModernKnob::~ModernKnob()
@@ -37,16 +38,148 @@ ModernKnob::~ModernKnob()
 
 void ModernKnob::paintEvent(QPaintEvent *event)
 {
+	/*
+	 * Hi!
+	 * Here are some notes about quirks as I develop them:
+	 *
+	 *
+	 * You may see lines like this a lot:
+	 * pen.setWidthF(width()/(35/3.3));
+	 * This one is just a few lines down.
+	 *
+	 * Here's what's going on: I designed this based on
+	 * Budislav's 35-pixel knob (the bigger one of the two
+	 * in his design). The math here is saying, "What is 3.3
+	 * pixels out of 35 possible when the entire knob is
+	 * scaled up to {width()} pixels?"
+	 *
+	 *
+	 *
+	 * DrawArc takes 16ths of a degree as input. The angle
+	 * measurements start at zero pointing right, and count
+	 * up turning counterclockwise, just like you probably
+	 * learned in math.
+	 */
+
 	QPainter m_canvas(this);
 
 	m_canvas.setRenderHint(QPainter::RenderHint::Antialiasing);
 
-	QPen pen = QPen(QColor(26, 218, 225));
-	pen.setWidthF(3.3);
+	QPen pen = QPen(QColor(70, 81, 94));
+	pen.setWidthF(width()/(35/3.3));
 	m_canvas.setPen(pen);
 
-	QRectF rectangle = QRectF(QPointF(1.5, 1.5), QSizeF(width()-3, height()-3));
-	m_canvas.drawArc(rectangle, -(360*16*3)/20, (360*16*8)/10);
+	float outerRingTopLeft = width()/(35/1.5);
+	float outerRingSize = width() - width()/(35/3.0);
 
-	m_canvas.setBackground(QBrush(QColor(255, 0, 0)));
+	QRectF outerRingRect = QRectF(QPointF(outerRingTopLeft, outerRingTopLeft), QSizeF(outerRingSize, outerRingSize));
+	m_canvas.drawArc(outerRingRect, -(360*16*7)/20, -(360*16*8)/10);
+
+	pen = QPen(QColor(26, 218, 225));
+	pen.setWidthF(width()/(35/3.3));
+	m_canvas.setPen(pen);
+
+	m_canvas.drawArc(outerRingRect, -(360*16*7)/20, -(360*16*8*m_value)/10);
+
+	// Maybe gradient this to transparent for bigger sizes?
+	float darkCircleTopLeft = width()/(35/6.0);
+	float darkCircleSize = width() - width()/(35/12.0);
+	QRectF darkCircleRect = QRectF(QPointF(darkCircleTopLeft, darkCircleTopLeft), QSizeF(darkCircleSize, darkCircleSize));
+	QRadialGradient darkCircleGrad = QRadialGradient(QPointF(width()/2.0, height()/2.0), width()/(35/11.5)); // 11.5 doesn't look good at very large sizes
+	darkCircleGrad.setColorAt(0, QColor(30, 33, 37));
+	darkCircleGrad.setColorAt(0.95, QColor(30, 33, 37));
+	darkCircleGrad.setColorAt(1, QColor(0, 0, 0, 0));
+	QBrush brush = QBrush(darkCircleGrad);
+	m_canvas.setPen(Qt::PenStyle::NoPen);
+	m_canvas.setBrush(brush);
+	m_canvas.drawEllipse(darkCircleRect);
+
+	float lightCircleTopLeft = width()/(35/7.0);
+	float lightCircleSize = width() - width()/(35/14.0);
+	QRectF lightCircleRect = QRectF(QPointF(lightCircleTopLeft, lightCircleTopLeft), QSizeF(lightCircleSize, lightCircleSize));
+	// This will need to be rotated depending on the knob value
+	QLinearGradient lightCircleGrad = QLinearGradient(QPointF(width()/2, width()/(35/7.0)), QPointF(width()/2, width() - width()/(35/14.0)));
+	lightCircleGrad.setColorAt(0, QColor(91, 109, 127));
+	lightCircleGrad.setColorAt(0.5, QColor(82, 96, 113));
+	lightCircleGrad.setColorAt(1, QColor(73, 85, 99));
+	brush = QBrush(lightCircleGrad);
+	m_canvas.setBrush(brush);
+	m_canvas.drawEllipse(lightCircleRect);
+
+	float highlightCircleTopLeft = width()/(35/8.0);
+	float highlightCircleSize = width() - width()/(35/16.0);
+	QRectF highlightCircleRect = QRectF(QPointF(highlightCircleTopLeft, highlightCircleTopLeft), QSizeF(highlightCircleSize, highlightCircleSize));
+	QRadialGradient highlightCircleGrad = QRadialGradient(QPointF(width()/2.0, height()/4.0), width()/(35/11.5));
+	highlightCircleGrad.setColorAt(0, QColor(121, 135, 151));
+	//highlightCircleGrad.setColorAt(0.95, QColor(30, 33, 37));
+	highlightCircleGrad.setColorAt(1, QColor(0, 0, 0, 0));
+	pen = QPen(QBrush(highlightCircleGrad), width()/(35/2.0));
+	m_canvas.setPen(pen);
+	m_canvas.setBrush(Qt::BrushStyle::NoBrush);
+	m_canvas.drawArc(highlightCircleRect, 0, 16*180);
+	m_canvas.setPen(Qt::PenStyle::NoPen);
+
+	m_canvas.translate(width()*.5, height()*.5);
+	m_canvas.rotate((m_value - 0.5) * 360 * (4.0/5));
+
+	//-(width()*.5) fixes centering
+	QRectF markerRect = QRectF(QPoint(width()/2.0 - width()/(35/1.5)-(width()*.5), height()/2.0 - height()/(35/10.5)-(width()*.5)), QSizeF(width()/(35/3.0), height()/(35/8.0)));
+	QRectF markerShadowRect1 = QRectF(QPoint(width()/2.0 - width()/(35/2.5)-(width()*.5), height()/2.0 - height()/(35/9.5)-(width()*.5)), QSizeF(width()/(35/5.0), height()/(35/8.0)));
+	QRectF markerShadowRect2 = QRectF(QPoint(width()/2.0 - width()/(35/2.5)-(width()*.5), height()/2.0 - height()/(35/8.5)-(width()*.5)), QSizeF(width()/(35/5.0), height()/(35/8.0)));
+
+	// what
+	// apparently you can't use transparency in linear gradients
+	// okay, time to fake transparency
+	QLinearGradient markerShadowGrad1 = QLinearGradient(QPointF(width()/2 - width()/(35/1.5)-(width()*.5), height()/3.0-(width()*.5)), QPointF(width()/2 + width()/(35/1.5)-(width()*.5), height()/3.0-(width()*.5)));
+	markerShadowGrad1.setColorAt(0, QColor(72, 85, 100));
+	markerShadowGrad1.setColorAt(0.5, QColor(67, 74, 82));
+	markerShadowGrad1.setColorAt(1, QColor(72, 85, 100));
+
+	QLinearGradient markerShadowGrad2 = QLinearGradient(QPointF(width()/2 - width()/(35/1.5)-(width()*.5), height()/3.0-(width()*.5)), QPointF(width()/2 + width()/(35/1.5)-(width()*.5), height()/3.0-(width()*.5)));
+	markerShadowGrad2.setColorAt(0, QColor(80, 95, 111));
+	markerShadowGrad2.setColorAt(0.5, QColor(68, 81, 94));
+	markerShadowGrad2.setColorAt(1, QColor(80, 95, 111));
+
+	//brush = QBrush(QColor(181, 201, 226));
+	m_canvas.setBrush(QBrush(markerShadowGrad2));
+	m_canvas.drawRect(markerShadowRect2);
+	m_canvas.setBrush(QBrush(markerShadowGrad1));
+	m_canvas.drawRect(markerShadowRect1);
+
+	brush = QBrush(QColor(181, 201, 226));
+	m_canvas.setBrush(brush);
+	m_canvas.drawRect(markerRect);
+}
+
+void ModernKnob::mousePressEvent(QMouseEvent * event)
+{
+	m_mousePressed = true;
+	m_storedCursorPos = cursor().pos();
+	setCursor(Qt::BlankCursor);
+}
+
+
+void ModernKnob::mouseMoveEvent(QMouseEvent * event)
+{
+	QCursor c = cursor();
+	float delta = c.pos().y() - m_storedCursorPos.y();
+	c.setPos(m_storedCursorPos);
+	setCursor(c);
+
+	float potentialValue = m_value - delta / 300;
+	if (potentialValue > 1)
+		m_value = 1;
+	else if (potentialValue < 0)
+		m_value = 0;
+	else
+		m_value = potentialValue;
+	update();
+}
+
+
+
+void ModernKnob::mouseReleaseEvent(QMouseEvent * event)
+{
+	m_mousePressed = false;
+	setCursor(Qt::ArrowCursor);
 }

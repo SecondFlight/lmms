@@ -43,10 +43,16 @@ public:
 
 protected:
 	virtual void paintEvent(QPaintEvent * event);
+	virtual void mousePressEvent(QMouseEvent * event);
+	virtual void mouseMoveEvent(QMouseEvent * event);
+	virtual void mouseReleaseEvent(QMouseEvent * event);
 
 private:
 	int m_size;
 	QPainter m_canvas;
+	float m_value;
+	bool m_mousePressed;
+	QPoint m_storedCursorPos;
 };
 
 #endif
