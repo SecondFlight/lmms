@@ -70,8 +70,8 @@ void ModernKnob::paintEvent(QPaintEvent *event)
 	pen.setCapStyle(Qt::FlatCap);
 	m_canvas.setPen(pen);
 
-	float outerRingTopLeft = width()/(35/1.5);
-	float outerRingSize = width() - width()/(35/3.0);
+	float outerRingTopLeft = width()/(35/1.7);
+	float outerRingSize = width() - width()/(35/3.4);
 
 	QRectF outerRingRect = QRectF(QPointF(outerRingTopLeft, outerRingTopLeft), QSizeF(outerRingSize, outerRingSize));
 	m_canvas.drawArc(outerRingRect, -(360*16*7)/20, -(360*16*8)/10);
