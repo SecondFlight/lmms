@@ -69,6 +69,11 @@ void ModernKnob::paintEvent(QPaintEvent *event)
 	 * when the knob is >100 pixels big.
 	 */
 
+	/*setMaximumHeight(m_value * 400 + 1);
+	setMinimumHeight(m_value * 400 + 1);
+	setMaximumWidth(m_value * 400 + 1);
+	setMinimumWidth(m_value * 400 + 1);*/
+
 	QPainter m_canvas(this);
 
 	m_canvas.setRenderHint(QPainter::RenderHint::Antialiasing);
@@ -116,14 +121,14 @@ void ModernKnob::paintEvent(QPaintEvent *event)
 	m_canvas.setBrush(brush);
 	m_canvas.drawEllipse(lightCircleRect);
 
-	float highlightCircleTopLeft = width()/(35/8.0);
-	float highlightCircleSize = width() - width()/(35/16.0);
+	float highlightCircleTopLeft = width()/(35/(8.0 - width()*.002));
+	float highlightCircleSize = width() - width()/(35/(16.0 - width()*.004));
 	QRectF highlightCircleRect = QRectF(QPointF(highlightCircleTopLeft, highlightCircleTopLeft), QSizeF(highlightCircleSize, highlightCircleSize));
 	QRadialGradient highlightCircleGrad = QRadialGradient(QPointF(width()/2.0, height()/4.0), width()/(35/11.5));
 	highlightCircleGrad.setColorAt(0, QColor(121, 135, 151));
 	//highlightCircleGrad.setColorAt(0.95, QColor(30, 33, 37));
 	highlightCircleGrad.setColorAt(1, QColor(0, 0, 0, 0));
-	pen = QPen(QBrush(highlightCircleGrad), width()/(35/2.0));
+	pen = QPen(QBrush(highlightCircleGrad), width()/(35/(2.0 - width()*.004)));
 	m_canvas.setPen(pen);
 	m_canvas.setBrush(Qt::BrushStyle::NoBrush);
 	m_canvas.drawArc(highlightCircleRect, 0, 16*180);
