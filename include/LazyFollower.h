@@ -22,3 +22,37 @@
  * Boston, MA 02110-1301 USA.
  *
  */
+
+#include <QTimer>
+#include <QWidget>
+
+#ifndef LAZYFOLLOWER_H
+#define LAZYFOLLOWER_H
+
+class LazyFollowable
+{
+public:
+	virtual void setFollowValue(float value) = 0;
+};
+
+class LazyFollower : public QObject
+{
+	Q_OBJECT
+public:
+	LazyFollower(LazyFollowable* followable, float initValue, float fractionPerFrame);
+	LazyFollower();
+	void updateTarget(float input);
+	void setFractionPerFrame(float frac);
+
+protected slots:
+	void update();
+
+private:
+	LazyFollowable* m_followable;
+	float m_currentTarget;
+	float m_currentValue;
+	float m_frac;
+	QTimer* m_timer;
+};
+
+#endif

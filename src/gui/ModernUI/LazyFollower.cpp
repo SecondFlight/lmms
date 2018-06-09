@@ -22,3 +22,42 @@
  * Boston, MA 02110-1301 USA.
  *
  */
+
+#include "LazyFollower.h"
+#include <QtMath>
+
+LazyFollower::LazyFollower(LazyFollowable* followable, float initValue, float fractionPerFrame)
+{
+	m_followable = followable;
+	m_currentTarget = initValue;
+	m_currentValue = initValue;
+	m_frac = fractionPerFrame;
+	m_timer = new QTimer(this);
+	connect(m_timer, SIGNAL(timeout()), this, SLOT(update()));
+	m_timer->start(qRound(1000/60.0)); // this is naive
+}
+
+LazyFollower::LazyFollower()
+{
+	m_followable = nullptr;
+	m_currentTarget = 0;
+	m_currentValue = 0;
+	m_frac = 0.1;
+	m_timer = nullptr;
+}
+
+void LazyFollower::updateTarget(float input)
+{
+	m_currentTarget = input;
+}
+
+void LazyFollower::setFractionPerFrame(float frac)
+{
+	m_frac = frac;
+}
+
+void LazyFollower::update()
+{
+	m_currentValue = m_currentTarget + (m_currentValue - m_currentTarget) * m_frac;
+	m_followable->setFollowValue(m_currentValue);
+}

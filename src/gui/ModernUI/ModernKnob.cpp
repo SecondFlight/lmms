@@ -30,6 +30,8 @@ ModernKnob::ModernKnob(QWidget * _parent, const QString & _name):
 {
 	m_value = 0.5;
 	m_mousePressed = false;
+	m_followValue = 0.5;
+	m_follower = new LazyFollower(this, 0.5, 0.8);
 }
 
 ModernKnob::~ModernKnob()
@@ -94,7 +96,7 @@ void ModernKnob::paintEvent(QPaintEvent *event)
 	pen.setWidthF(width()/(35/3.3));
 	m_canvas.setPen(pen);
 
-	m_canvas.drawArc(outerRingRect, -(360*16*7)/20, -(360*16*8*m_value)/10);
+	m_canvas.drawArc(outerRingRect, -(360*16*7)/20, -(360*16*8*m_followValue)/10);
 
 	// Maybe gradient this to transparent for bigger sizes?
 	float darkCircleTopLeft = width()/(35/6.0);
@@ -193,6 +195,7 @@ void ModernKnob::mouseMoveEvent(QMouseEvent * event)
 		m_value = 0;
 	else
 		m_value = potentialValue;
+	m_follower->updateTarget(m_value);
 	update();
 }
 
