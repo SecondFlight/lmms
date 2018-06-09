@@ -27,7 +27,7 @@
 #include "GuiTestControlDialog.h"
 #include "GuiTestControls.h"
 #include "embed.h"
-#include "../../src/gui/ModernUI/ModernKnob.h" // oops
+#include "ModernKnob.h"
 
 
 GuiTestControlDialog::GuiTestControlDialog(GuiTestControls *controls):
