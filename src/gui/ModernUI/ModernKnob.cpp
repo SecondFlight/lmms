@@ -59,6 +59,14 @@ void ModernKnob::paintEvent(QPaintEvent *event)
 	 * measurements start at zero pointing right, and count
 	 * up turning counterclockwise, just like you probably
 	 * learned in math.
+	 *
+	 *
+	 *
+	 * There are a few lines that have something like this:
+	 * ...width()/(35/(width()*0.001 + 14.5))...
+	 * This is to modify a value depending on how big the
+	 * knob is. The shadows tend to stand out too much
+	 * when the knob is >100 pixels big.
 	 */
 
 	QPainter m_canvas(this);
@@ -125,28 +133,33 @@ void ModernKnob::paintEvent(QPaintEvent *event)
 	m_canvas.rotate((m_value - 0.5) * 360 * (4.0/5));
 
 	//-(width()*.5) fixes centering
-	QRectF markerRect = QRectF(QPoint(width()/2.0 - width()/(35/1.5)-(width()*.5), height()/2.0 - height()/(35/10.5)-(width()*.5)), QSizeF(width()/(35/3.0), height()/(35/8.0)));
-	QRectF markerShadowRect1 = QRectF(QPoint(width()/2.0 - width()/(35/2.5)-(width()*.5), height()/2.0 - height()/(35/9.5)-(width()*.5)), QSizeF(width()/(35/5.0), height()/(35/8.0)));
-	QRectF markerShadowRect2 = QRectF(QPoint(width()/2.0 - width()/(35/2.5)-(width()*.5), height()/2.0 - height()/(35/8.5)-(width()*.5)), QSizeF(width()/(35/5.0), height()/(35/8.0)));
+	QRectF markerRect = QRectF(QPointF(width()/2.0 - width()/(35/1.5)-(width()*.5), height()/2.0 - height()/(35/10.5)-(width()*.5)), QSizeF(width()/(35/3.0), height()/(35/8.0)));
+	QRectF markerShadowRectLeft = QRectF(QPointF(width()/2.0 - width()/(35/3.5)-(width()*.5), height()/2.0 - height()/(35/10.5)-(width()*.5)), QSizeF(width()/(35/3.0), height()/(35/8.0)));
+	QRectF markerShadowRectRight = QRectF(QPointF(width()/2.0 + width()/(35/1.5)-(width()*.5), height()/2.0 - height()/(35/10.5)-(width()*.5)), QSizeF(width()/(35/3.0), height()/(35/8.0)));
+	QRectF markerShadowRectBottom = QRectF(QPointF(width()/2.0 - width()/(35/2.5)-(width()*.5), height()/2.0 - height()/(35/2.5)-(width()*.5)), QSizeF(width()/(35/5.0), height()/(35/2.0)));
 
-	// what
-	// apparently you can't use transparency in linear gradients
-	// okay, time to fake transparency
-	QLinearGradient markerShadowGrad1 = QLinearGradient(QPointF(width()/2 - width()/(35/1.5)-(width()*.5), height()/3.0-(width()*.5)), QPointF(width()/2 + width()/(35/1.5)-(width()*.5), height()/3.0-(width()*.5)));
-	markerShadowGrad1.setColorAt(0, QColor(72, 85, 100));
-	markerShadowGrad1.setColorAt(0.5, QColor(67, 74, 82));
-	markerShadowGrad1.setColorAt(1, QColor(72, 85, 100));
+	QRadialGradient markerShadowGradLeft = QRadialGradient(QPointF(width()/2.0 + width()/(35/(width() * 0.003 + 13.8))-(width()*.5), height()/2.0 - height()/(35/7.0)-(width()*.5)), width()/(35/16.95));
+	markerShadowGradLeft.setColorAt(0, QColor(30, 37, 46));
+	markerShadowGradLeft.setColorAt(0.9, QColor(30, 37, 46));
+	markerShadowGradLeft.setColorAt(1, QColor(0, 0, 0, 0));
 
-	QLinearGradient markerShadowGrad2 = QLinearGradient(QPointF(width()/2 - width()/(35/1.5)-(width()*.5), height()/3.0-(width()*.5)), QPointF(width()/2 + width()/(35/1.5)-(width()*.5), height()/3.0-(width()*.5)));
-	markerShadowGrad2.setColorAt(0, QColor(80, 95, 111));
-	markerShadowGrad2.setColorAt(0.5, QColor(68, 81, 94));
-	markerShadowGrad2.setColorAt(1, QColor(80, 95, 111));
+	QRadialGradient markerShadowGradRight = QRadialGradient(QPointF(width()/2.0 - width()/(35/(width() * 0.003 + 13.8))-(width()*.5), height()/2.0 - height()/(35/7.0)-(width()*.5)), width()/(35/16.95));
+	markerShadowGradRight.setColorAt(0, QColor(30, 37, 46));
+	markerShadowGradRight.setColorAt(0.9, QColor(30, 37, 46));
+	markerShadowGradRight.setColorAt(1, QColor(0, 0, 0, 0));
+
+	QRadialGradient markerShadowGradBottom = QRadialGradient(QPointF(/*width()/2.0-(width()*.5)*/0, height()/2.0 - height()/(35/(2.7 + width()*.003))-(width()*.5)), width()/(35/2.0));
+	markerShadowGradBottom.setColorAt(0, QColor(30, 37, 46));
+	markerShadowGradRight.setColorAt(0.9, QColor(30, 37, 46));
+	markerShadowGradBottom.setColorAt(1, QColor(0, 0, 0, 0));
 
 	//brush = QBrush(QColor(181, 201, 226));
-	m_canvas.setBrush(QBrush(markerShadowGrad2));
-	m_canvas.drawRect(markerShadowRect2);
-	m_canvas.setBrush(QBrush(markerShadowGrad1));
-	m_canvas.drawRect(markerShadowRect1);
+	m_canvas.setBrush(QBrush(markerShadowGradRight));
+	m_canvas.drawRect(markerShadowRectRight);
+	m_canvas.setBrush(QBrush(markerShadowGradLeft));
+	m_canvas.drawRect(markerShadowRectLeft);
+	m_canvas.setBrush(QBrush(markerShadowGradBottom));
+	m_canvas.drawRect(markerShadowRectBottom);
 
 	brush = QBrush(QColor(181, 201, 226));
 	m_canvas.setBrush(brush);
