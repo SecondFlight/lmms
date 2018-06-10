@@ -1,5 +1,5 @@
 /*
- * ModernKnob.h - A knob widget for the Modern UI
+ * ModernToggleSwitch.cpp - A toggle switch widget for the Modern UI
  *
  * Copyright (c) 2018 Joshua Wade <lastname/firstinitial/at/southern/dot/edu>
  * Original UI design by Budislav Stepanov
@@ -24,44 +24,4 @@
  *
  */
 
-
-#ifndef MODERNKNOB_H
-#define MODERNKNOB_H
-
-#include <QWidget>
-#include <QPainter>
-
-//#include "templates.h"
-#include "LazyFollower.h"
-
-
-class /*EXPORT*/ ModernKnob : public QWidget, public LazyFollowable//, public FloatModelView
-{
-	Q_OBJECT
-
-public:
-	ModernKnob(QWidget * _parent = NULL, const QString & _name = QString());
-	virtual ~ModernKnob();
-	inline virtual void setFollowValue(float value)
-	{
-		m_followValue = value;
-		update();
-	}
-
-protected:
-	virtual void paintEvent(QPaintEvent * event);
-	virtual void mousePressEvent(QMouseEvent * event);
-	virtual void mouseMoveEvent(QMouseEvent * event);
-	virtual void mouseReleaseEvent(QMouseEvent * event);
-
-private:
-	int m_size;
-	QPainter m_canvas;
-	float m_value;
-	float m_followValue;
-	bool m_mousePressed;
-	QPoint m_storedCursorPos;
-	LazyFollower* m_follower;
-};
-
-#endif
+#include <ModernToggleSwitch.h>

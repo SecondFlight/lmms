@@ -90,6 +90,7 @@ SET(LMMS_SRCS
 
 	gui/ModernUI/LazyFollower.cpp
 	gui/ModernUI/ModernKnob.cpp
+	gui/ModernUI/ModernToggleSwitch.cpp
 
 	PARENT_SCOPE
 )

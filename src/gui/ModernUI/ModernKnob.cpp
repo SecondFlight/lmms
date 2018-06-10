@@ -1,5 +1,7 @@
 /*
  * ModernKnob.cpp - A knob widget for the Modern UI
+ * Original UI design by Budislav Stepanov
+ *
  *
  * Copyright (c) 2018 Joshua Wade <lastname/firstinitial/at/southern/dot/edu>
  *
