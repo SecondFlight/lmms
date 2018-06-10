@@ -34,7 +34,6 @@ LazyFollower::LazyFollower(LazyFollowable* followable, float initValue, float fr
 	m_frac = fractionPerFrame;
 	m_timer = new QTimer(this);
 	connect(m_timer, SIGNAL(timeout()), this, SLOT(update()));
-	m_timer->start(qRound(1000/60.0)); // this is naive
 }
 
 LazyFollower::LazyFollower()
@@ -49,6 +48,8 @@ LazyFollower::LazyFollower()
 void LazyFollower::updateTarget(float input)
 {
 	m_currentTarget = input;
+	if (!m_timer->isActive())
+		m_timer->start(qRound(1000/60.0));
 }
 
 void LazyFollower::setFractionPerFrame(float frac)
@@ -60,4 +61,9 @@ void LazyFollower::update()
 {
 	m_currentValue = m_currentTarget + (m_currentValue - m_currentTarget) * m_frac;
 	m_followable->setFollowValue(m_currentValue);
+	if (qAbs(m_currentValue - m_currentTarget) < 0.0001)
+	{
+		m_currentValue = m_currentTarget;
+		m_timer->stop();
+	}
 }
