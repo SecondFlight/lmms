@@ -73,11 +73,6 @@ void ModernKnob::paintEvent(QPaintEvent *event)
 	 * when the knob is >100 pixels big.
 	 */
 
-	/*setMaximumHeight(m_value * 400 + 1);
-	setMinimumHeight(m_value * 400 + 1);
-	setMaximumWidth(m_value * 400 + 1);
-	setMinimumWidth(m_value * 400 + 1);*/
-
 	QPainter m_canvas(this);
 
 	m_canvas.setRenderHint(QPainter::RenderHint::Antialiasing);

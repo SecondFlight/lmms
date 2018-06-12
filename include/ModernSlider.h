@@ -1,5 +1,5 @@
 /*
- * ModernToggleSwitch.h - A toggle switch widget for the Modern UI
+ * ModernSlider.h - A slider widget for the Modern UI
  *
  * Copyright (c) 2018 Joshua Wade <lastname/firstinitial/at/southern/dot/edu>
  * Original UI design by Budislav Stepanov
@@ -26,20 +26,29 @@
 
 #include <QWidget>
 #include <QPainter>
+#include <QMouseEvent>
 
-class ModernToggleSwitch : public QWidget
+class ModernSlider : public QWidget
 {
 	Q_OBJECT
 
 public:
-	ModernToggleSwitch(QWidget * _parent = NULL, const QString & _name = QString());
-	virtual ~ModernToggleSwitch();
+	ModernSlider(QWidget * _parent = NULL, const QString & _name = QString());
+	virtual ~ModernSlider();
 
 protected:
 	virtual void paintEvent(QPaintEvent * event);
 	virtual void mousePressEvent(QMouseEvent * event);
+	virtual void mouseMoveEvent(QMouseEvent * event);
+	virtual void mouseReleaseEvent(QMouseEvent * event);
 
 private:
 	QPainter m_canvas;
-	bool m_value;
+	float m_value;
+	float getHandleTop();
+	bool m_inDragOperation;
+	float m_mouseDistanceFromHandleTop;
+
+	static const int s_handleHeight = 31;
+	static const int s_handleWidth = 18;
 };

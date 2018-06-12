@@ -28,6 +28,8 @@
 #include "GuiTestControls.h"
 #include "embed.h"
 #include "ModernKnob.h"
+#include "ModernToggleSwitch.h"
+#include "ModernSlider.h"
 
 
 GuiTestControlDialog::GuiTestControlDialog(GuiTestControls *controls):
@@ -36,12 +38,12 @@ GuiTestControlDialog::GuiTestControlDialog(GuiTestControls *controls):
 	setAutoFillBackground(true);
 
 	QPalette pal;
-	pal.setColor(QPalette::ColorRole::Background, QColor(52, 62, 74));
+	pal.setColor(QPalette::ColorRole::Background, QColor(59, 59, 59));
 	setPalette( pal );
 
-	setFixedSize(1200, 580);
+	setFixedSize(1600, 800);
 
-	ModernKnob* knob1 = new ModernKnob(this);
+	/*ModernKnob* knob1 = new ModernKnob(this);
 	knob1->setMaximumSize(17, 17);
 	knob1->setMinimumSize(17, 17);
 	knob1->adjustSize();
@@ -57,9 +59,9 @@ GuiTestControlDialog::GuiTestControlDialog(GuiTestControls *controls):
 	knob3->setMaximumSize(35, 35);
 	knob3->setMinimumSize(35, 35);
 	knob3->adjustSize();
-	knob3->move(QPoint(340, 100));
+	knob3->move(QPoint(340, 100));*/
 
-	ModernKnob* knob4 = new ModernKnob(this);
+	/*ModernKnob* knob4 = new ModernKnob(this);
 	knob4->setMaximumSize(50, 50);
 	knob4->setMinimumSize(50, 50);
 	knob4->adjustSize();
@@ -75,5 +77,19 @@ GuiTestControlDialog::GuiTestControlDialog(GuiTestControls *controls):
 	knob6->setMaximumSize(350, 350);
 	knob6->setMinimumSize(350, 350);
 	knob6->adjustSize();
-	knob6->move(QPoint(700, 100));
+	knob6->move(QPoint(700, 100));*/
+
+	/*ModernToggleSwitch* toggleSwitch1 = new ModernToggleSwitch(this);
+	toggleSwitch1->setMaximumHeight(20);
+	toggleSwitch1->setMaximumWidth(20);
+	toggleSwitch1->setMinimumHeight(20);
+	toggleSwitch1->setMinimumWidth(20);
+	toggleSwitch1->adjustSize();
+	toggleSwitch1->move(QPoint(100, 200));*/
+
+	ModernSlider* slider1 = new ModernSlider(this);
+	slider1->setMaximumHeight(105);
+	slider1->setMinimumHeight(105);
+	slider1->adjustSize();
+	slider1->move(500, 100);
 }

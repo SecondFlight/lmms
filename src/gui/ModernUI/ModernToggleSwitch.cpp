@@ -24,4 +24,38 @@
  *
  */
 
-#include <ModernToggleSwitch.h>
+#include "ModernToggleSwitch.h"
+
+ModernToggleSwitch::ModernToggleSwitch(QWidget *_parent, const QString &_name):
+	QWidget(_parent)
+{
+	m_value = false;
+}
+
+ModernToggleSwitch::~ModernToggleSwitch()
+{
+}
+
+void ModernToggleSwitch::paintEvent(QPaintEvent *event)
+{
+	QPainter m_canvas(this);
+
+	// I don't think I want antialiasing here. I have gradients, but
+	// this is a square widget and I want the edges to be crisp.
+	//m_canvas.setRenderHint(QPainter::RenderHint::Antialiasing);
+
+	QRect lightBackground = QRect(QPoint(1, 1), QPoint(width() - 1, height() - 1));
+	QLinearGradient lightBackgroundGradient = QLinearGradient(QPoint(0, 2), QPoint(0, height() - 1));
+	lightBackgroundGradient.setColorAt(0, QColor(36, 43, 50));
+	lightBackgroundGradient.setColorAt(1, QColor(29, 33, 39));
+	m_canvas.setPen(Qt::PenStyle::NoPen);
+	QBrush brush = QBrush(lightBackgroundGradient);
+	m_canvas.setBrush(brush);
+	m_canvas.drawRect(lightBackground);
+}
+
+void ModernToggleSwitch::mousePressEvent(QMouseEvent *event)
+{
+	m_value = !m_value;
+	update();
+}
