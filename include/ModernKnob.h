@@ -32,21 +32,15 @@
 #include <QPainter>
 
 //#include "templates.h"
-#include "LazyFollower.h"
 
 
-class /*EXPORT*/ ModernKnob : public QWidget, public LazyFollowable//, public FloatModelView
+class /*EXPORT*/ ModernKnob : public QWidget//, public LazyFollowable, public FloatModelView
 {
 	Q_OBJECT
 
 public:
 	ModernKnob(QWidget * _parent = NULL, const QString & _name = QString());
 	virtual ~ModernKnob();
-	inline virtual void setFollowValue(float value)
-	{
-		m_followValue = value;
-		update();
-	}
 
 protected:
 	virtual void paintEvent(QPaintEvent * event);
@@ -61,7 +55,6 @@ private:
 	float m_followValue;
 	bool m_mousePressed;
 	QPoint m_storedCursorPos;
-	LazyFollower* m_follower;
 };
 
 #endif
