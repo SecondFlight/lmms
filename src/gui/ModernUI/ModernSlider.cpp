@@ -70,7 +70,12 @@ void ModernSlider::paintEvent(QPaintEvent *event)
 	m_canvas.drawRoundedRect(handleBackground, 1, 1);
 
 	QRectF handleInside = QRectF(QPointF(1.5, handleTop + 1.5), QSizeF(s_handleWidth - 3, s_handleHeight - 3));
-	m_canvas.setBrush(QBrush(QColor(94, 94, 94)));
+	int shade;
+	if (m_inDragOperation)
+		shade = s_handleInsideBackgroundClickedShade;
+	else
+		shade = s_handleInsideBackgroundShade;
+	m_canvas.setBrush(QBrush(QColor(shade, shade, shade)));
 	m_canvas.setPen(QPen(QBrush(QColor(112, 112, 112)), 1));
 	m_canvas.drawRoundedRect(handleInside, 0.25, 0.25);
 
@@ -88,6 +93,7 @@ void ModernSlider::mousePressEvent(QMouseEvent *event)
 		m_inDragOperation = true;
 		m_mouseDistanceFromHandleTop = event->y() - handleTop;
 	}
+	update();
 }
 
 void ModernSlider::mouseMoveEvent(QMouseEvent *event)
@@ -110,6 +116,7 @@ void ModernSlider::mouseMoveEvent(QMouseEvent *event)
 void ModernSlider::mouseReleaseEvent(QMouseEvent *event)
 {
 	m_inDragOperation = false;
+	update();
 }
 
 void ModernSlider::setFollowValue(float value)

@@ -55,4 +55,6 @@ private:
 
 	static const int s_handleHeight = 31;
 	static const int s_handleWidth = 18;
+	static const int s_handleInsideBackgroundShade = 94;
+	static const int s_handleInsideBackgroundClickedShade = 112;
 };
