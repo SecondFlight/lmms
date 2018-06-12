@@ -28,7 +28,9 @@
 #include <QPainter>
 #include <QMouseEvent>
 
-class ModernSlider : public QWidget
+#include "LazyFollower.h"
+
+class ModernSlider : public QWidget, public LazyFollowable
 {
 	Q_OBJECT
 
@@ -41,13 +43,15 @@ protected:
 	virtual void mousePressEvent(QMouseEvent * event);
 	virtual void mouseMoveEvent(QMouseEvent * event);
 	virtual void mouseReleaseEvent(QMouseEvent * event);
+	virtual void setFollowValue(float value);
 
 private:
 	QPainter m_canvas;
 	float m_value;
-	float getHandleTop();
+	int getHandleTop();
 	bool m_inDragOperation;
 	float m_mouseDistanceFromHandleTop;
+	LazyFollower* m_lazyFollower;
 
 	static const int s_handleHeight = 31;
 	static const int s_handleWidth = 18;

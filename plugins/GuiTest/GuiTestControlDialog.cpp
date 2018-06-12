@@ -38,7 +38,7 @@ GuiTestControlDialog::GuiTestControlDialog(GuiTestControls *controls):
 	setAutoFillBackground(true);
 
 	QPalette pal;
-	pal.setColor(QPalette::ColorRole::Background, QColor(59, 59, 59));
+	pal.setColor(QPalette::ColorRole::Background, QColor(82, 82, 82));
 	setPalette( pal );
 
 	setFixedSize(1600, 800);

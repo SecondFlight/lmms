@@ -36,6 +36,7 @@ ModernSlider::ModernSlider(QWidget *_parent, const QString &_name):
 
 	m_value = 0.8;
 	m_inDragOperation = false;
+	m_lazyFollower = new LazyFollower(this, m_value, 0.5);
 }
 
 ModernSlider::~ModernSlider()
@@ -46,10 +47,11 @@ void ModernSlider::paintEvent(QPaintEvent *event)
 {
 	QPainter m_canvas(this);
 
-	//m_canvas.setRenderHint(QPainter::Antialiasing);
-
 	float handleTop = getHandleTop();
 
+
+
+	// background groove
 	QRect grooveBackground = QRect(QPoint(s_handleWidth/2 - 2, 0), QSize(4, height()));
 	m_canvas.setBrush(QBrush(QColor(43, 43, 43)));
 	m_canvas.setPen(Qt::PenStyle::NoPen);
@@ -58,17 +60,22 @@ void ModernSlider::paintEvent(QPaintEvent *event)
 	QRect grooveHighlight = QRect(QPoint(s_handleWidth/2 - 1, handleTop + s_handleHeight/2), QPoint(s_handleWidth/2, height() - 2));	m_canvas.setBrush(QBrush(QColor(25, 126, 96)));
 	m_canvas.drawRect(grooveHighlight);
 
+
+
+	// handle
+	m_canvas.setRenderHint(QPainter::Antialiasing);
+
 	QRectF handleBackground = QRectF(QPointF(0, handleTop), QSizeF(s_handleWidth, s_handleHeight));
 	m_canvas.setBrush(QBrush(QColor(43, 43, 43)));
-	m_canvas.drawRect(handleBackground/*, 2, 2*/);
+	m_canvas.drawRoundedRect(handleBackground, 1, 1);
 
-	QRectF handleInside = QRectF(QPointF(1, handleTop + 1), QSizeF(s_handleWidth - 3, s_handleHeight - 3));
+	QRectF handleInside = QRectF(QPointF(1.5, handleTop + 1.5), QSizeF(s_handleWidth - 3, s_handleHeight - 3));
 	m_canvas.setBrush(QBrush(QColor(94, 94, 94)));
 	m_canvas.setPen(QPen(QBrush(QColor(112, 112, 112)), 1));
-	m_canvas.drawRect(handleInside/*, 2, 2*/);
+	m_canvas.drawRoundedRect(handleInside, 0.25, 0.25);
 
 	m_canvas.setPen(QPen(QBrush(QColor(202, 202, 202)), 1));
-	m_canvas.drawLine(QPointF(4, handleTop + s_handleHeight/2), QPointF(s_handleWidth - 5, handleTop + s_handleHeight/2));
+	m_canvas.drawLine(QPointF(3.5, handleTop + s_handleHeight/2 + 0.5), QPointF(s_handleWidth - 3.5, handleTop + s_handleHeight/2 + 0.5));
 }
 
 void ModernSlider::mousePressEvent(QMouseEvent *event)
@@ -89,13 +96,13 @@ void ModernSlider::mouseMoveEvent(QMouseEvent *event)
 	{
 		float y = event->y();
 		float h = height();
-		float potentialNewValue = (y - m_mouseDistanceFromHandleTop)/(h - s_handleHeight);// * ((height() - s_handleHeight)/height());
+		float potentialNewValue = (y - m_mouseDistanceFromHandleTop)/(h - s_handleHeight);
 		if (potentialNewValue > 1)
-			m_value = 1;
+			m_lazyFollower->updateTarget(1);
 		else if (potentialNewValue < 0)
-			m_value = 0;
+			m_lazyFollower->updateTarget(0);
 		else
-			m_value = potentialNewValue;
+			m_lazyFollower->updateTarget(potentialNewValue);
 	}
 	update();
 }
@@ -105,7 +112,13 @@ void ModernSlider::mouseReleaseEvent(QMouseEvent *event)
 	m_inDragOperation = false;
 }
 
-float ModernSlider::getHandleTop()
+void ModernSlider::setFollowValue(float value)
 {
-	return ((height() - s_handleHeight)) * m_value;
+	m_value = value;
+	update();
+}
+
+int ModernSlider::getHandleTop()
+{
+	return qRound(((height() - s_handleHeight)) * m_value);
 }
