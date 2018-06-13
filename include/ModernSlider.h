@@ -43,11 +43,12 @@ protected:
 	virtual void mousePressEvent(QMouseEvent * event);
 	virtual void mouseMoveEvent(QMouseEvent * event);
 	virtual void mouseReleaseEvent(QMouseEvent * event);
-	virtual void setFollowValue(float value);
+	virtual void setFollowValues(QVector<float> values);
 
 private:
 	QPainter m_canvas;
 	float m_value;
+	float m_handleInsideColor;
 	int getHandleTop();
 	bool m_inDragOperation;
 	float m_mouseDistanceFromHandleTop;

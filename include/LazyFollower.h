@@ -25,6 +25,7 @@
 
 #include <QTimer>
 #include <QWidget>
+#include <QVector>
 
 #ifndef LAZYFOLLOWER_H
 #define LAZYFOLLOWER_H
@@ -32,27 +33,31 @@
 class LazyFollowable
 {
 public:
-	virtual void setFollowValue(float value) = 0;
+	virtual void setFollowValues(QVector<float> values) = 0;
 };
 
 class LazyFollower : public QObject
 {
 	Q_OBJECT
 public:
-	LazyFollower(LazyFollowable* followable, float initValue, float fractionPerFrame);
+	LazyFollower(LazyFollowable* followable, int numFollowValues, QVector<float> initValues, QVector<float> fractionsPerFrame);
 	LazyFollower();
-	void updateTarget(float input);
-	void setFractionPerFrame(float frac);
+	void updateTarget(QVector<float> inputs);
+	void updateTarget(int index, float input);
+	void setFractionPerFrame(QVector<float> fracs);
+	void setFractionPerFrame(int index, float frac);
 
 protected slots:
 	void update();
 
 private:
 	LazyFollowable* m_followable;
-	float m_currentTarget;
-	float m_currentValue;
-	float m_frac;
+
+	int m_numFollowValues;
 	QTimer* m_timer;
+	QVector<float> m_currentTargets;
+	QVector<float> m_currentValues;
+	QVector<float> m_fracs;
 };
 
 #endif

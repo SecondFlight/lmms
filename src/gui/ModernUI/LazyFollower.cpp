@@ -26,12 +26,13 @@
 #include "LazyFollower.h"
 #include <QtMath>
 
-LazyFollower::LazyFollower(LazyFollowable* followable, float initValue, float fractionPerFrame)
+LazyFollower::LazyFollower(LazyFollowable* followable, int numFollowValues, QVector<float> initValues, QVector<float> fractionsPerFrame)
 {
 	m_followable = followable;
-	m_currentTarget = initValue;
-	m_currentValue = initValue;
-	m_frac = fractionPerFrame;
+	m_currentTargets = initValues;
+	m_currentValues = initValues;
+	m_fracs = fractionsPerFrame;
+	m_numFollowValues = numFollowValues;
 	m_timer = new QTimer(this);
 	connect(m_timer, SIGNAL(timeout()), this, SLOT(update()));
 }
@@ -39,31 +40,51 @@ LazyFollower::LazyFollower(LazyFollowable* followable, float initValue, float fr
 LazyFollower::LazyFollower()
 {
 	m_followable = nullptr;
-	m_currentTarget = 0;
-	m_currentValue = 0;
-	m_frac = 0.1;
+	m_currentTargets = QVector<float>();
+	m_currentValues = QVector<float>();
+	m_fracs = QVector<float>();
 	m_timer = nullptr;
 }
 
-void LazyFollower::updateTarget(float input)
+void LazyFollower::updateTarget(QVector<float> inputs)
 {
-	m_currentTarget = input;
+	m_currentTargets = inputs;
 	if (!m_timer->isActive())
 		m_timer->start(qRound(1000/60.0));
 }
 
-void LazyFollower::setFractionPerFrame(float frac)
+void LazyFollower::updateTarget(int index, float input)
 {
-	m_frac = frac;
+	m_currentTargets[index] = input;
+	if (!m_timer->isActive())
+		m_timer->start(qRound(1000/60.0));
+}
+
+void LazyFollower::setFractionPerFrame(QVector<float> fracs)
+{
+	m_fracs = fracs;
+}
+
+void LazyFollower::setFractionPerFrame(int index, float frac)
+{
+	m_fracs[index] = frac;
 }
 
 void LazyFollower::update()
 {
-	m_currentValue = m_currentTarget + (m_currentValue - m_currentTarget) * m_frac;
-	m_followable->setFollowValue(m_currentValue);
-	if (qAbs(m_currentValue - m_currentTarget) < 0.0001)
+	bool allValuesStopped = true;
+	for (int i = 0; i < m_numFollowValues; i++)
 	{
-		m_currentValue = m_currentTarget;
+		m_currentValues[i] = m_currentTargets[i] + (m_currentValues[i] - m_currentTargets[i]) * m_fracs[i];
+		allValuesStopped = allValuesStopped && (qAbs(m_currentValues[i] - m_currentTargets[i]) < 0.0001);
+	}
+
+	if (allValuesStopped)
+	{
+		for (int i = 0; i < m_numFollowValues; i++)
+			m_currentValues[i] = m_currentTargets[i];
 		m_timer->stop();
 	}
+
+	m_followable->setFollowValues(m_currentValues);
 }

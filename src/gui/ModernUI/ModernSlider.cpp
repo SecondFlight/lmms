@@ -36,7 +36,8 @@ ModernSlider::ModernSlider(QWidget *_parent, const QString &_name):
 
 	m_value = 0.8;
 	m_inDragOperation = false;
-	m_lazyFollower = new LazyFollower(this, m_value, 0.5);
+	m_lazyFollower = new LazyFollower(this, 2, {m_value, 94}, {0.65, 0.65});
+	m_handleInsideColor = 94;
 }
 
 ModernSlider::~ModernSlider()
@@ -70,11 +71,7 @@ void ModernSlider::paintEvent(QPaintEvent *event)
 	m_canvas.drawRoundedRect(handleBackground, 1, 1);
 
 	QRectF handleInside = QRectF(QPointF(1.5, handleTop + 1.5), QSizeF(s_handleWidth - 3, s_handleHeight - 3));
-	int shade;
-	if (m_inDragOperation)
-		shade = s_handleInsideBackgroundClickedShade;
-	else
-		shade = s_handleInsideBackgroundShade;
+	int shade = m_handleInsideColor;
 	m_canvas.setBrush(QBrush(QColor(shade, shade, shade)));
 	m_canvas.setPen(QPen(QBrush(QColor(112, 112, 112)), 1));
 	m_canvas.drawRoundedRect(handleInside, 0.25, 0.25);
@@ -94,6 +91,7 @@ void ModernSlider::mousePressEvent(QMouseEvent *event)
 		m_mouseDistanceFromHandleTop = event->y() - handleTop;
 	}
 	update();
+	m_lazyFollower->updateTarget(1, s_handleInsideBackgroundClickedShade);
 }
 
 void ModernSlider::mouseMoveEvent(QMouseEvent *event)
@@ -104,11 +102,11 @@ void ModernSlider::mouseMoveEvent(QMouseEvent *event)
 		float h = height();
 		float potentialNewValue = (y - m_mouseDistanceFromHandleTop)/(h - s_handleHeight);
 		if (potentialNewValue > 1)
-			m_lazyFollower->updateTarget(1);
+			m_lazyFollower->updateTarget(0, 1);
 		else if (potentialNewValue < 0)
-			m_lazyFollower->updateTarget(0);
+			m_lazyFollower->updateTarget(0, 0);
 		else
-			m_lazyFollower->updateTarget(potentialNewValue);
+			m_lazyFollower->updateTarget(0, potentialNewValue);
 	}
 	update();
 }
@@ -116,12 +114,14 @@ void ModernSlider::mouseMoveEvent(QMouseEvent *event)
 void ModernSlider::mouseReleaseEvent(QMouseEvent *event)
 {
 	m_inDragOperation = false;
+	m_lazyFollower->updateTarget(1, s_handleInsideBackgroundShade);
 	update();
 }
 
-void ModernSlider::setFollowValue(float value)
+void ModernSlider::setFollowValues(QVector<float> values)
 {
-	m_value = value;
+	m_value = values[0];
+	m_handleInsideColor = values[1];
 	update();
 }
 
