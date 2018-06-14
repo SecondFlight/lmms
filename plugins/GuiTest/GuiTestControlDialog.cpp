@@ -30,7 +30,6 @@
 #include "ModernKnob.h"
 #include "ModernToggleSwitch.h"
 #include "ModernSlider.h"
-#include "ModernVolumeMeter.h"
 
 
 GuiTestControlDialog::GuiTestControlDialog(GuiTestControls *controls):
@@ -94,19 +93,27 @@ GuiTestControlDialog::GuiTestControlDialog(GuiTestControls *controls):
 	slider1->adjustSize();
 	slider1->move(500, 100);
 
-	ModernVolumeMeter* volumeMeter1 = new ModernVolumeMeter(this);
-	volumeMeter1->setMaximumHeight(105);
-	volumeMeter1->setMinimumHeight(105);
-	volumeMeter1->setMaximumWidth(13);
-	volumeMeter1->setMinimumWidth(13);
-	volumeMeter1->adjustSize();
-	volumeMeter1->move(483, 100);
+	m_volumeMeter1 = new ModernVolumeMeter(this);
+	m_volumeMeter1->setMaximumHeight(105);
+	m_volumeMeter1->setMinimumHeight(105);
+	m_volumeMeter1->setMaximumWidth(13);
+	m_volumeMeter1->setMinimumWidth(13);
+	m_volumeMeter1->adjustSize();
+	m_volumeMeter1->move(483, 100);
 
-	ModernVolumeMeter* volumeMeter2 = new ModernVolumeMeter(this);
-	volumeMeter2->setMaximumHeight(315);
-	volumeMeter2->setMinimumHeight(315);
-	volumeMeter2->setMaximumWidth(39);
-	volumeMeter2->setMinimumWidth(39);
-	volumeMeter2->adjustSize();
-	volumeMeter2->move(700, 50);
+	m_volumeMeter2 = new ModernVolumeMeter(this);
+	m_volumeMeter2->setMaximumHeight(315);
+	m_volumeMeter2->setMinimumHeight(315);
+	m_volumeMeter2->setMaximumWidth(39);
+	m_volumeMeter2->setMinimumWidth(39);
+	m_volumeMeter2->adjustSize();
+	m_volumeMeter2->move(700, 50);
+
+	m_volumeMeter3 = new ModernVolumeMeter(this);
+	m_volumeMeter3->setMaximumHeight(26);
+	m_volumeMeter3->setMinimumHeight(26);
+	m_volumeMeter3->setMaximumWidth(11);
+	m_volumeMeter3->setMinimumWidth(11);
+	m_volumeMeter3->adjustSize();
+	m_volumeMeter3->move(450, 100);
 }

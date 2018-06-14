@@ -26,6 +26,8 @@
 #ifndef GUITEST_H
 #define GUITEST_H
 
+#include <QElapsedTimer>
+
 #include "Effect.h"
 #include "GuiTestControls.h"
 
@@ -43,6 +45,9 @@ public:
 
 private:
 	GuiTestControls m_guiTestControls;
+	QElapsedTimer m_frameTimer;
+	float m_currentMaxL;
+	float m_currentMaxR;
 
 	friend class GuiTestControls;
 };

@@ -24,13 +24,21 @@
  *
  */
 
+#include <cmath>
+#include <QtMath>
+
 #include "ModernVolumeMeter.h"
 
 ModernVolumeMeter::ModernVolumeMeter(QWidget *_parent, const QString &_name):
 	QWidget( _parent )
 {
-	m_lValue = 1;
-	m_rValue = 0.8;
+	m_lValue = 0;
+	m_rValue = 0;
+	m_lValueRaw = 0;
+	m_rValueRaw = 0;
+	m_lActual = 0;
+	m_rActual = 0;
+	m_fallAmtPerFrame = 0.07;
 }
 
 ModernVolumeMeter::~ModernVolumeMeter()
@@ -39,8 +47,26 @@ ModernVolumeMeter::~ModernVolumeMeter()
 
 void ModernVolumeMeter::updateValues(float l, float r)
 {
-	m_lValue = l;
-	m_rValue = r;
+	m_lActual = l;
+	m_rActual = r;
+
+	m_lValueRaw -= m_fallAmtPerFrame;
+	m_rValueRaw -= m_fallAmtPerFrame;
+
+	if (m_lActual > m_lValueRaw)
+		m_lValueRaw = m_lActual;
+	if (m_rActual > m_rValueRaw)
+		m_rValueRaw = m_rActual;
+
+	m_lValue = qPow(m_lValueRaw, 0.1);
+	m_rValue = qPow(m_rValueRaw, 0.1);
+
+	update();
+}
+
+float ModernVolumeMeter::rawToDb(float raw)
+{
+	return 10 * log10(raw);
 }
 
 void ModernVolumeMeter::paintEvent(QPaintEvent *event)
@@ -60,12 +86,14 @@ void ModernVolumeMeter::paintEvent(QPaintEvent *event)
 	m_canvas.drawRect(leftMeterBackground);
 	m_canvas.drawRect(rightMeterBackground);
 
-	QRect leftMeter = QRect(QPoint(s_borderWidth, (height() - s_borderWidth*2) - (height() - s_borderWidth*2) * m_lValue + s_borderWidth), QPoint(width() - s_borderWidth - meterBackgroundWidth - s_borderWidth - 1, height() - s_borderWidth - 1));
-	QRect rightMeter = QRect(QPoint(s_borderWidth + meterBackgroundWidth + 1, (height() - s_borderWidth*2) - (height() - s_borderWidth*2) * m_rValue + s_borderWidth), QPoint(width() - s_borderWidth - 1, height() - s_borderWidth - 1));
+	float clipPoint = 0.845;
+
+	QRect leftMeter = QRect(QPoint(s_borderWidth, (height() - s_borderWidth*2) - (height() - s_borderWidth*2) * (m_lValue * clipPoint) + s_borderWidth), QPoint(width() - s_borderWidth - meterBackgroundWidth - s_borderWidth - 1, height() - s_borderWidth - 1));
+	QRect rightMeter = QRect(QPoint(s_borderWidth + meterBackgroundWidth + 1, (height() - s_borderWidth*2) - (height() - s_borderWidth*2) * (m_rValue * clipPoint) + s_borderWidth), QPoint(width() - s_borderWidth - 1, height() - s_borderWidth - 1));
 	QLinearGradient grad = QLinearGradient(QPoint(0, 0), QPoint(0, height()));
 	grad.setColorAt(0, QColor(229, 0, 49));
-	grad.setColorAt(0.154, QColor(229, 0, 49));
-	grad.setColorAt(0.155, QColor(229, 167, 0));
+	grad.setColorAt((1 - clipPoint - 0.001), QColor(229, 0, 49));
+	grad.setColorAt((1 - clipPoint), QColor(229, 167, 0));
 	grad.setColorAt(0.3010, QColor(229, 167, 0));
 	grad.setColorAt(0.3011, QColor(10, 196, 140));
 	grad.setColorAt(1, QColor(7, 132, 94));
