@@ -97,8 +97,8 @@ GuiTestControlDialog::GuiTestControlDialog(GuiTestControls *controls):
 	ModernVolumeMeter* volumeMeter1 = new ModernVolumeMeter(this);
 	volumeMeter1->setMaximumHeight(105);
 	volumeMeter1->setMinimumHeight(105);
-	volumeMeter1->setMaximumWidth(29);
-	volumeMeter1->setMinimumWidth(29);
+	volumeMeter1->setMaximumWidth(13);
+	volumeMeter1->setMinimumWidth(13);
 	volumeMeter1->adjustSize();
-	volumeMeter1->move(464, 100);
+	volumeMeter1->move(483, 100);
 }

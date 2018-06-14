@@ -43,4 +43,6 @@ private:
 	QPainter m_canvas;
 	float m_lValue;
 	float m_rValue;
+
+	static const int s_borderWidth = 1;
 };

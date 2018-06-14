@@ -52,19 +52,23 @@ void ModernVolumeMeter::paintEvent(QPaintEvent *event)
 	m_canvas.setPen(Qt::NoPen);
 	m_canvas.drawRect(background);
 
-	int meterBackgroundWidth = width()/2 - 3;
+	int meterBackgroundWidth = width()/2 - s_borderWidth;
 
-	QRect leftMeterBackground = QRect(QPoint(3, 3), QSize(meterBackgroundWidth, height() - 6));
-	QRect rightMeterBackground = QRect(QPoint(3 + meterBackgroundWidth + 1, 3), QSize(meterBackgroundWidth, height() - 6));
+	QRect leftMeterBackground = QRect(QPoint(s_borderWidth, s_borderWidth), QSize(meterBackgroundWidth, height() - s_borderWidth*2));
+	QRect rightMeterBackground = QRect(QPoint(s_borderWidth + meterBackgroundWidth + 1, s_borderWidth), QSize(meterBackgroundWidth, height() - s_borderWidth*2));
 	m_canvas.setBrush(QBrush(QColor(61, 61, 61)));
 	m_canvas.drawRect(leftMeterBackground);
 	m_canvas.drawRect(rightMeterBackground);
 
-	QRect leftMeter = QRect(QPoint(3, (height() - 6) - (height() - 6) * m_lValue + 3), QPoint(width() - 3 - meterBackgroundWidth - 2, height() - 4));
-	QRect rightMeter = QRect(QPoint(3 + meterBackgroundWidth + 1, (height() - 6) - (height() - 6) * m_rValue + 3), QPoint(width() - 4, height() - 4));
+	QRect leftMeter = QRect(QPoint(s_borderWidth, (height() - s_borderWidth*2) - (height() - s_borderWidth*2) * m_lValue + s_borderWidth), QPoint(width() - s_borderWidth - meterBackgroundWidth - s_borderWidth - 1, height() - s_borderWidth - 1));
+	QRect rightMeter = QRect(QPoint(s_borderWidth + meterBackgroundWidth + 1, (height() - s_borderWidth*2) - (height() - s_borderWidth*2) * m_rValue + s_borderWidth), QPoint(width() - s_borderWidth - 1, height() - s_borderWidth - 1));
 	QLinearGradient grad = QLinearGradient(QPoint(0, 0), QPoint(0, height()));
-	grad.setColorAt(0, QColor(10, 195, 140));
-	grad.setColorAt(1, QColor(70, 131, 94));
+	grad.setColorAt(0, QColor(229, 0, 49));
+	grad.setColorAt(0.154, QColor(229, 0, 49));
+	grad.setColorAt(0.155, QColor(229, 167, 0));
+	grad.setColorAt(0.3010, QColor(229, 167, 0));
+	grad.setColorAt(0.3011, QColor(10, 196, 140));
+	grad.setColorAt(1, QColor(7, 132, 94));
 	m_canvas.setBrush(grad);
 	m_canvas.drawRect(leftMeter);
 	m_canvas.drawRect(rightMeter);
