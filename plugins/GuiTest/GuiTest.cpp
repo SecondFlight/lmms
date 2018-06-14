@@ -50,6 +50,8 @@ GuiTestEffect::GuiTestEffect(Model* parent, const Descriptor::SubPluginFeatures:
 	Effect( &guitest_plugin_descriptor, parent, key ),
 	m_guiTestControls( this )
 {
+	m_frameTimer = QElapsedTimer();
+	m_frameTimer.start();
 }
 
 
@@ -60,6 +62,22 @@ GuiTestEffect::~GuiTestEffect()
 
 bool GuiTestEffect::processAudioBuffer(sampleFrame *buffer, const fpp_t frames)
 {
+	for (int i = 0; i < frames; i++)
+	{
+		if (buffer[i][0] > m_currentMaxL)
+			m_currentMaxL = qAbs(buffer[i][0]);
+		if (buffer[i][1] > m_currentMaxR)
+			m_currentMaxR = qAbs(buffer[i][1]);
+	}
+	if (m_frameTimer.nsecsElapsed() > ((qint64)1000*(qint64)1000000)/60)
+	{
+		m_guiTestControls.m_dialog->m_volumeMeter3->updateValues(m_currentMaxL, m_currentMaxR);
+		m_guiTestControls.m_dialog->m_volumeMeter1->updateValues(m_currentMaxL, m_currentMaxR);
+		m_guiTestControls.m_dialog->m_volumeMeter2->updateValues(m_currentMaxL, m_currentMaxR);
+		m_frameTimer.restart();
+		m_currentMaxL = 0;
+		m_currentMaxR = 0;
+	}
 	return true;
 }
 

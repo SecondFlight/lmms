@@ -26,6 +26,7 @@
 #define GUITEST_CONTROL_DIALOG_H
 
 #include "EffectControlDialog.h"
+#include "ModernVolumeMeter.h"
 
 
 class GuiTestControls;
@@ -39,6 +40,10 @@ public:
 	virtual ~GuiTestControlDialog()
 	{
 	}
+	ModernVolumeMeter* m_volumeMeter1;
+	ModernVolumeMeter* m_volumeMeter2;
+	ModernVolumeMeter* m_volumeMeter3;
+
 };
 
 #endif

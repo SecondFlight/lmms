@@ -56,8 +56,11 @@ public:
 
 	virtual EffectControlDialog* createView()
 	{
-		return new GuiTestControlDialog(this);
+		m_dialog = new GuiTestControlDialog(this);
+		return m_dialog;
 	}
+
+	GuiTestControlDialog* m_dialog;
 
 
 	/*

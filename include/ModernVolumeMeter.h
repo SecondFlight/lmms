@@ -43,4 +43,13 @@ private:
 	QPainter m_canvas;
 	float m_lValue;
 	float m_rValue;
+	float m_lValueRaw;
+	float m_rValueRaw;
+	float m_lActual;
+	float m_rActual;
+	float m_fallAmtPerFrame;
+
+	float rawToDb(float raw);
+
+	static const int s_borderWidth = 1;
 };
