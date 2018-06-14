@@ -55,7 +55,7 @@ void ModernSlider::paintEvent(QPaintEvent *event)
 	// background groove
 	QRect grooveBackground = QRect(QPoint(s_handleWidth/2 - 2, 0), QSize(4, height()));
 	m_canvas.setBrush(QBrush(QColor(43, 43, 43)));
-	m_canvas.setPen(Qt::PenStyle::NoPen);
+	m_canvas.setPen(Qt::NoPen);
 	m_canvas.drawRect(grooveBackground);
 
 	QRect grooveHighlight = QRect(QPoint(s_handleWidth/2 - 1, handleTop + s_handleHeight/2), QPoint(s_handleWidth/2, height() - 2));	m_canvas.setBrush(QBrush(QColor(25, 126, 96)));

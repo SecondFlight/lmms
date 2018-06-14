@@ -92,6 +92,7 @@ SET(LMMS_SRCS
 	gui/ModernUI/ModernKnob.cpp
 	gui/ModernUI/ModernToggleSwitch.cpp
 	gui/ModernUI/ModernSlider.cpp
+	gui/ModernUI/ModernVolumeMeter.cpp
 
 	PARENT_SCOPE
 )

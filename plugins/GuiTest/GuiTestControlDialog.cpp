@@ -30,6 +30,7 @@
 #include "ModernKnob.h"
 #include "ModernToggleSwitch.h"
 #include "ModernSlider.h"
+#include "ModernVolumeMeter.h"
 
 
 GuiTestControlDialog::GuiTestControlDialog(GuiTestControls *controls):
@@ -92,4 +93,12 @@ GuiTestControlDialog::GuiTestControlDialog(GuiTestControls *controls):
 	slider1->setMinimumHeight(105);
 	slider1->adjustSize();
 	slider1->move(500, 100);
+
+	ModernVolumeMeter* volumeMeter1 = new ModernVolumeMeter(this);
+	volumeMeter1->setMaximumHeight(105);
+	volumeMeter1->setMinimumHeight(105);
+	volumeMeter1->setMaximumWidth(29);
+	volumeMeter1->setMinimumWidth(29);
+	volumeMeter1->adjustSize();
+	volumeMeter1->move(464, 100);
 }
