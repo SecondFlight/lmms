@@ -36,6 +36,9 @@ public:
 	virtual ~ModernVolumeMeter();
 	void updateValues(float l, float r);
 
+public slots:
+	void redrawUI();
+
 protected:
 	virtual void paintEvent(QPaintEvent * event);
 

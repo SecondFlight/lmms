@@ -24,6 +24,10 @@
  */
 
 #include "LazyFollower.h"
+
+#include "GuiApplication.h"
+#include "MainWindow.h"
+
 #include <QtMath>
 
 LazyFollower::LazyFollower(LazyFollowable* followable, int numFollowValues, QVector<float> initValues, QVector<float> fractionsPerFrame)
@@ -33,8 +37,8 @@ LazyFollower::LazyFollower(LazyFollowable* followable, int numFollowValues, QVec
 	m_currentValues = initValues;
 	m_fracs = fractionsPerFrame;
 	m_numFollowValues = numFollowValues;
-	m_timer = new QTimer(this);
-	connect(m_timer, SIGNAL(timeout()), this, SLOT(update()));
+	m_stopped = true;
+	connect(gui->mainWindow(), SIGNAL(periodicUpdate()), this, SLOT(update()));
 }
 
 LazyFollower::LazyFollower()
@@ -43,21 +47,19 @@ LazyFollower::LazyFollower()
 	m_currentTargets = QVector<float>();
 	m_currentValues = QVector<float>();
 	m_fracs = QVector<float>();
-	m_timer = nullptr;
+	m_stopped = true;
 }
 
 void LazyFollower::updateTarget(QVector<float> inputs)
 {
 	m_currentTargets = inputs;
-	if (!m_timer->isActive())
-		m_timer->start(qRound(1000/60.0));
+	m_stopped = false;
 }
 
 void LazyFollower::updateTarget(int index, float input)
 {
 	m_currentTargets[index] = input;
-	if (!m_timer->isActive())
-		m_timer->start(qRound(1000/60.0));
+	m_stopped = false;
 }
 
 void LazyFollower::setFractionPerFrame(QVector<float> fracs)
@@ -72,6 +74,9 @@ void LazyFollower::setFractionPerFrame(int index, float frac)
 
 void LazyFollower::update()
 {
+	if (m_stopped)
+		return;
+
 	bool allValuesStopped = true;
 	for (int i = 0; i < m_numFollowValues; i++)
 	{
@@ -83,7 +88,7 @@ void LazyFollower::update()
 	{
 		for (int i = 0; i < m_numFollowValues; i++)
 			m_currentValues[i] = m_currentTargets[i];
-		m_timer->stop();
+		m_stopped = true;
 	}
 
 	m_followable->setFollowValues(m_currentValues);
