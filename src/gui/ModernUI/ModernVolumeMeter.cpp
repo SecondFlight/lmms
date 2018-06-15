@@ -28,6 +28,8 @@
 #include <QtMath>
 
 #include "ModernVolumeMeter.h"
+#include "GuiApplication.h"
+#include "MainWindow.h"
 
 ModernVolumeMeter::ModernVolumeMeter(QWidget *_parent, const QString &_name):
 	QWidget( _parent )
@@ -39,10 +41,16 @@ ModernVolumeMeter::ModernVolumeMeter(QWidget *_parent, const QString &_name):
 	m_lActual = 0;
 	m_rActual = 0;
 	m_fallAmtPerFrame = 0.07;
+	connect(gui->mainWindow(), SIGNAL(periodicUpdate()), this, SLOT(redrawUI()));
 }
 
 ModernVolumeMeter::~ModernVolumeMeter()
 {
+}
+
+void ModernVolumeMeter::redrawUI()
+{
+	update();
 }
 
 void ModernVolumeMeter::updateValues(float l, float r)
@@ -60,8 +68,6 @@ void ModernVolumeMeter::updateValues(float l, float r)
 
 	m_lValue = qPow(m_lValueRaw, 0.1);
 	m_rValue = qPow(m_rValueRaw, 0.1);
-
-	update();
 }
 
 float ModernVolumeMeter::rawToDb(float raw)
