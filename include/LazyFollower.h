@@ -23,7 +23,6 @@
  *
  */
 
-#include <QTimer>
 #include <QWidget>
 #include <QVector>
 
@@ -54,7 +53,7 @@ private:
 	LazyFollowable* m_followable;
 
 	int m_numFollowValues;
-	QTimer* m_timer;
+	bool m_stopped;
 	QVector<float> m_currentTargets;
 	QVector<float> m_currentValues;
 	QVector<float> m_fracs;
