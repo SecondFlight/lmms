@@ -29,6 +29,7 @@
 
 #include <QWidget>
 #include <QPainter>
+#include <QString>
 
 class ModernButton : public QWidget
 {
@@ -41,6 +42,7 @@ public:
 	void setOff();
 	void setOn();
 	void setSticky(bool sticky);
+	void setText(QString text);
 
 protected:
 	virtual void paintEvent(QPaintEvent * event);
@@ -53,6 +55,8 @@ private:
 	bool m_value;
 	bool m_mousePressed;
 	bool m_isSticky;
+	bool m_hasText;
+	QString m_text;
 };
 
 #endif

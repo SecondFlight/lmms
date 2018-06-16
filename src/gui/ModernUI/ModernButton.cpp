@@ -27,6 +27,7 @@
 #include "ModernButton.h"
 
 #include <QMouseEvent>
+#include <QFont>
 
 ModernButton::ModernButton(QWidget *_parent, const QString &_name):
 	QWidget(_parent)
@@ -34,6 +35,8 @@ ModernButton::ModernButton(QWidget *_parent, const QString &_name):
 	m_value = false;
 	m_mousePressed = false;
 	m_isSticky = false;
+	m_hasText = false;
+	m_text = "";
 }
 
 ModernButton::~ModernButton()
@@ -47,16 +50,19 @@ void ModernButton::paintEvent(QPaintEvent *event)
 	QColor backgroundColor = QColor(43, 43, 43);
 	QColor highlightColor;
 	QColor highlightBorderColor;
+	QColor textColor;
 
 	if (m_value)
 	{
 		highlightColor = QColor(26, 108, 84);
 		highlightBorderColor = QColor(35, 128, 100);
+		textColor = QColor(30, 216, 160);
 	}
 	else
 	{
 		highlightColor = QColor(94, 94, 94);
 		highlightBorderColor = QColor(112, 112, 112);
+		textColor = QColor(202, 202, 202);
 	}
 
 	m_canvas.setRenderHint(QPainter::Antialiasing);
@@ -70,6 +76,13 @@ void ModernButton::paintEvent(QPaintEvent *event)
 	m_canvas.setBrush(QBrush(highlightColor));
 	m_canvas.setPen(QPen(QBrush(highlightBorderColor), 1));
 	m_canvas.drawRoundedRect(handleInside, 0.25, 0.25);
+
+	QFont font = QFont("Noto Sans CJK JP");
+	font.setPixelSize(12);
+	m_canvas.setFont(font);
+
+	m_canvas.setPen(textColor);
+	m_canvas.drawText(QPointF(7, height() - 5), m_text);
 }
 
 void ModernButton::mousePressEvent(QMouseEvent *event)
@@ -131,4 +144,17 @@ void ModernButton::setOff()
 void ModernButton::setSticky(bool sticky)
 {
 	m_isSticky = sticky;
+}
+
+void ModernButton::setText(QString text)
+{
+	if (text == "")
+	{
+		m_text = "";
+		m_hasText = false;
+		update();
+		return;
+	}
+	m_text = text;
+	update();
 }

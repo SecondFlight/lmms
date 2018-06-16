@@ -142,4 +142,13 @@ GuiTestControlDialog::GuiTestControlDialog(GuiTestControls *controls):
 	button3->setMinimumWidth(39);
 	button3->adjustSize();
 	button3->move(72, 20);
+
+	ModernButton* button4 = new ModernButton(this);
+	button4->setMaximumHeight(20);
+	button4->setMinimumHeight(20);
+	button4->setMaximumWidth(50);
+	button4->setMinimumWidth(50);
+	button4->adjustSize();
+	button4->move(113, 20);
+	button4->setText("+ Peak");
 }
