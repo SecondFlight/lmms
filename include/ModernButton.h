@@ -38,13 +38,19 @@ public:
 	ModernButton(QWidget * _parent = NULL, const QString & _name = QString());
 	virtual ~ModernButton();
 
+	void setOff();
+	void setOn();
+
 protected:
 	virtual void paintEvent(QPaintEvent * event);
 	virtual void mousePressEvent(QMouseEvent * event);
+	virtual void mouseMoveEvent(QMouseEvent *event);
+	virtual void mouseReleaseEvent(QMouseEvent * event);
 
 private:
 	QPainter m_canvas;
 	bool m_value;
+	bool m_mousePressed;
 };
 
 #endif

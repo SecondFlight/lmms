@@ -26,10 +26,13 @@
 
 #include "ModernButton.h"
 
+#include <QMouseEvent>
+
 ModernButton::ModernButton(QWidget *_parent, const QString &_name):
 	QWidget(_parent)
 {
 	m_value = false;
+	m_mousePressed = false;
 }
 
 ModernButton::~ModernButton()
@@ -40,19 +43,73 @@ void ModernButton::paintEvent(QPaintEvent *event)
 {
 	QPainter m_canvas(this);
 
+	QColor backgroundColor = QColor(43, 43, 43);
+	QColor highlightColor;
+	QColor highlightBorderColor;
+
+	if (m_value)
+	{
+		highlightColor = QColor(26, 108, 84);
+		highlightBorderColor = QColor(35, 128, 100);
+	}
+	else
+	{
+		highlightColor = QColor(94, 94, 94);
+		highlightBorderColor = QColor(112, 112, 112);
+	}
+
 	m_canvas.setRenderHint(QPainter::Antialiasing);
 
 	QRectF handleBackground = QRectF(QPointF(0, 0), QSizeF(width(), height()));
 	m_canvas.setPen(Qt::NoPen);
-	m_canvas.setBrush(QBrush(QColor(43, 43, 43)));
+	m_canvas.setBrush(QBrush(backgroundColor));
 	m_canvas.drawRoundedRect(handleBackground, 1, 1);
 
 	QRectF handleInside = QRectF(QPointF(1.5, 1.5), QSizeF(width() - 3, height() - 3));
-	m_canvas.setBrush(QBrush(QColor(94, 94, 94)));
-	m_canvas.setPen(QPen(QBrush(QColor(112, 112, 112)), 1));
+	m_canvas.setBrush(QBrush(highlightColor));
+	m_canvas.setPen(QPen(QBrush(highlightBorderColor), 1));
 	m_canvas.drawRoundedRect(handleInside, 0.25, 0.25);
 }
 
 void ModernButton::mousePressEvent(QMouseEvent *event)
 {
+	m_mousePressed = true;
+	setOn();
+}
+
+void ModernButton::mouseMoveEvent(QMouseEvent *event)
+{
+	if (m_mousePressed)
+	{
+		if (m_value &&
+			(event->x() > width() || event->y() > height()
+			|| event->x() < 0 || event->y() < 0))
+		{
+			setOff();
+		}
+		else if ((!m_value) &&
+				 (event->x() < width() && event->y() < height()
+				  && event->x() > 0 && event->y() > 0))
+		{
+			setOn();
+		}
+	}
+}
+
+void ModernButton::mouseReleaseEvent(QMouseEvent *event)
+{
+	m_mousePressed = false;
+	setOff();
+}
+
+void ModernButton::setOn()
+{
+	m_value = true;
+	update();
+}
+
+void ModernButton::setOff()
+{
+	m_value = false;
+	update();
 }
