@@ -40,6 +40,7 @@ public:
 
 	void setOff();
 	void setOn();
+	void setSticky(bool sticky);
 
 protected:
 	virtual void paintEvent(QPaintEvent * event);
@@ -51,6 +52,7 @@ private:
 	QPainter m_canvas;
 	bool m_value;
 	bool m_mousePressed;
+	bool m_isSticky;
 };
 
 #endif

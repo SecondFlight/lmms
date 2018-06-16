@@ -33,6 +33,7 @@ ModernButton::ModernButton(QWidget *_parent, const QString &_name):
 {
 	m_value = false;
 	m_mousePressed = false;
+	m_isSticky = false;
 }
 
 ModernButton::~ModernButton()
@@ -73,13 +74,23 @@ void ModernButton::paintEvent(QPaintEvent *event)
 
 void ModernButton::mousePressEvent(QMouseEvent *event)
 {
-	m_mousePressed = true;
-	setOn();
+	if (!m_isSticky)
+	{
+		m_mousePressed = true;
+		setOn();
+	}
+	else
+	{
+		if (m_value)
+			setOff();
+		else
+			setOn();
+	}
 }
 
 void ModernButton::mouseMoveEvent(QMouseEvent *event)
 {
-	if (m_mousePressed)
+	if (m_mousePressed && !m_isSticky)
 	{
 		if (m_value &&
 			(event->x() > width() || event->y() > height()
@@ -98,8 +109,11 @@ void ModernButton::mouseMoveEvent(QMouseEvent *event)
 
 void ModernButton::mouseReleaseEvent(QMouseEvent *event)
 {
-	m_mousePressed = false;
-	setOff();
+	if (!m_isSticky)
+	{
+		m_mousePressed = false;
+		setOff();
+	}
 }
 
 void ModernButton::setOn()
@@ -112,4 +126,9 @@ void ModernButton::setOff()
 {
 	m_value = false;
 	update();
+}
+
+void ModernButton::setSticky(bool sticky)
+{
+	m_isSticky = sticky;
 }

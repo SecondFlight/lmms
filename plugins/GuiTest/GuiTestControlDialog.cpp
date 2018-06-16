@@ -133,6 +133,7 @@ GuiTestControlDialog::GuiTestControlDialog(GuiTestControls *controls):
 	button2->setMaximumWidth(20);
 	button2->adjustSize();
 	button2->move(50, 20);
+	button2->setSticky(true);
 
 	ModernButton* button3 = new ModernButton(this);
 	button3->setMaximumHeight(20);
