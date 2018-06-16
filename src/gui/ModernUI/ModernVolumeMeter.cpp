@@ -66,8 +66,8 @@ void ModernVolumeMeter::updateValues(float l, float r)
 	if (m_rActual > m_rValueRaw)
 		m_rValueRaw = m_rActual;
 
-	m_lValue = qPow(m_lValueRaw, 0.1);
-	m_rValue = qPow(m_rValueRaw, 0.1);
+	m_lValue = qSqrt(m_lValueRaw);
+	m_rValue = qSqrt(m_rValueRaw);
 }
 
 float ModernVolumeMeter::rawToDb(float raw)
