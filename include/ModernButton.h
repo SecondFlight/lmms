@@ -1,5 +1,5 @@
 /*
- * ModernToggleSwitch.h - A toggle switch widget for the Modern UI
+ * ModernButton.h - A button widget for the Modern UI
  *
  * Copyright (c) 2018 Joshua Wade <lastname/firstinitial/at/southern/dot/edu>
  * Original UI design by Budislav Stepanov
@@ -24,19 +24,19 @@
  *
  */
 
-#ifndef MODERNTOGGLESWITCH_H
-#define MODERNTOGGLESWITCH_H
+#ifndef MODERNBUTTON_H
+#define MODERNBUTTON_H
 
 #include <QWidget>
 #include <QPainter>
 
-class ModernToggleSwitch : public QWidget
+class ModernButton : public QWidget
 {
 	Q_OBJECT
 
 public:
-	ModernToggleSwitch(QWidget * _parent = NULL, const QString & _name = QString());
-	virtual ~ModernToggleSwitch();
+	ModernButton(QWidget * _parent = NULL, const QString & _name = QString());
+	virtual ~ModernButton();
 
 protected:
 	virtual void paintEvent(QPaintEvent * event);

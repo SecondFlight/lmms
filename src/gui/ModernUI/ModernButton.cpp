@@ -1,5 +1,5 @@
 /*
- * ModernToggleSwitch.h - A toggle switch widget for the Modern UI
+ * ModernButton.cpp - A button widget for the Modern UI
  *
  * Copyright (c) 2018 Joshua Wade <lastname/firstinitial/at/southern/dot/edu>
  * Original UI design by Budislav Stepanov
@@ -24,27 +24,35 @@
  *
  */
 
-#ifndef MODERNTOGGLESWITCH_H
-#define MODERNTOGGLESWITCH_H
+#include "ModernButton.h"
 
-#include <QWidget>
-#include <QPainter>
-
-class ModernToggleSwitch : public QWidget
+ModernButton::ModernButton(QWidget *_parent, const QString &_name):
+	QWidget(_parent)
 {
-	Q_OBJECT
+	m_value = false;
+}
 
-public:
-	ModernToggleSwitch(QWidget * _parent = NULL, const QString & _name = QString());
-	virtual ~ModernToggleSwitch();
+ModernButton::~ModernButton()
+{
+}
 
-protected:
-	virtual void paintEvent(QPaintEvent * event);
-	virtual void mousePressEvent(QMouseEvent * event);
+void ModernButton::paintEvent(QPaintEvent *event)
+{
+	QPainter m_canvas(this);
 
-private:
-	QPainter m_canvas;
-	bool m_value;
-};
+	m_canvas.setRenderHint(QPainter::Antialiasing);
 
-#endif
+	QRectF handleBackground = QRectF(QPointF(0, 0), QSizeF(width(), height()));
+	m_canvas.setPen(Qt::NoPen);
+	m_canvas.setBrush(QBrush(QColor(43, 43, 43)));
+	m_canvas.drawRoundedRect(handleBackground, 1, 1);
+
+	QRectF handleInside = QRectF(QPointF(1.5, 1.5), QSizeF(width() - 3, height() - 3));
+	m_canvas.setBrush(QBrush(QColor(94, 94, 94)));
+	m_canvas.setPen(QPen(QBrush(QColor(112, 112, 112)), 1));
+	m_canvas.drawRoundedRect(handleInside, 0.25, 0.25);
+}
+
+void ModernButton::mousePressEvent(QMouseEvent *event)
+{
+}

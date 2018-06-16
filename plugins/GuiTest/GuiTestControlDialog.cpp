@@ -30,6 +30,7 @@
 #include "ModernKnob.h"
 #include "ModernToggleSwitch.h"
 #include "ModernSlider.h"
+#include "ModernButton.h"
 
 
 GuiTestControlDialog::GuiTestControlDialog(GuiTestControls *controls):
@@ -116,4 +117,28 @@ GuiTestControlDialog::GuiTestControlDialog(GuiTestControls *controls):
 	m_volumeMeter3->setMinimumWidth(11);
 	m_volumeMeter3->adjustSize();
 	m_volumeMeter3->move(450, 100);
+
+	ModernButton* button1 = new ModernButton(this);
+	button1->setMaximumHeight(20);
+	button1->setMinimumHeight(20);
+	button1->setMaximumWidth(28);
+	button1->setMinimumWidth(28);
+	button1->adjustSize();
+	button1->move(20, 20);
+
+	ModernButton* button2 = new ModernButton(this);
+	button2->setMaximumHeight(20);
+	button2->setMinimumHeight(20);
+	button2->setMinimumWidth(20);
+	button2->setMaximumWidth(20);
+	button2->adjustSize();
+	button2->move(50, 20);
+
+	ModernButton* button3 = new ModernButton(this);
+	button3->setMaximumHeight(20);
+	button3->setMinimumHeight(20);
+	button3->setMaximumWidth(39);
+	button3->setMinimumWidth(39);
+	button3->adjustSize();
+	button3->move(72, 20);
 }
