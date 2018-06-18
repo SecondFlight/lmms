@@ -161,6 +161,8 @@ GuiTestControlDialog::GuiTestControlDialog(GuiTestControls *controls):
 	scrollbar1->adjustSize();
 	scrollbar1->move(800, 20);
 	scrollbar1->setVertical();
+	scrollbar1->setStart(0);
+	scrollbar1->setWidth(0.1);
 
 	ModernScrollbar* scrollbar2 = new ModernScrollbar(this);
 	scrollbar2->setMaximumHeight(16);
@@ -170,4 +172,6 @@ GuiTestControlDialog::GuiTestControlDialog(GuiTestControls *controls):
 	scrollbar2->adjustSize();
 	scrollbar2->move(20, 700);
 	scrollbar2->setHorizontal();
+	scrollbar2->setStart(0.2);
+	scrollbar2->setWidth(0.3);
 }

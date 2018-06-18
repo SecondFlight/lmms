@@ -47,17 +47,32 @@ public:
 	virtual ~ModernScrollbar();
 	void setVertical();
 	void setHorizontal();
+	void setStart(float start);
+	void setWidth(float width);
+	void setTotalSize(float size);
+	void tickForward();
+	void tickBackward();
+	void tryMoveTo(float newStartValue);
+	void setMinimumScrollbarWidth(float width);
 
 protected:
 	virtual void paintEvent(QPaintEvent * event);
 	virtual void mousePressEvent(QMouseEvent * event);
+	virtual void mouseMoveEvent(QMouseEvent * event);
+	virtual void mouseReleaseEvent(QMouseEvent * event);
 
 private:
 	QPainter m_canvas;
 	bool m_isHorizontal;
 	float m_startValue;
 	float m_endValue;
+	float m_totalSize;
+	float m_tickSize;
+	float m_minimumWidth;
+	bool m_isInDragOperation;
+	float m_delta;
 	void drawArrow(QPainter *canvas, Direction direction);
+	float mousePosToValue(QPoint pos);
 };
 
 #endif

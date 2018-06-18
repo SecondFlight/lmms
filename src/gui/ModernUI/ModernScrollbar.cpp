@@ -26,12 +26,17 @@
 
 #include "ModernScrollbar.h"
 
+#include <QMouseEvent>
+
 ModernScrollbar::ModernScrollbar(QWidget *_parent, const QString &_name):
 	QWidget(_parent)
 {
 	m_startValue = 0;
 	m_endValue = 1;
+	m_totalSize = 1;
 	m_isHorizontal = false;
+	m_tickSize = 0.05;
+	m_minimumWidth = 0.05;
 }
 
 ModernScrollbar::~ModernScrollbar()
@@ -72,9 +77,9 @@ void ModernScrollbar::paintEvent(QPaintEvent *event)
 	QRectF handle;
 
 	if (m_isHorizontal)
-		handle = QRectF(QPointF(16.5 + m_startValue*(width()-33), 1.5), QPointF(16.5 + m_endValue*(width()-33), height() - 1.5));
+		handle = QRectF(QPointF(16.5 + m_startValue*m_totalSize*(width()-33), 1.5), QPointF(16.5 + m_endValue*m_totalSize*(width()-33), height() - 1.5));
 	else
-		handle = QRectF(QPointF(1.5, 16.5 + m_startValue*(height()-33)), QPointF(width() - 1.5, 16.5 + m_endValue*(height()-33)));
+		handle = QRectF(QPointF(1.5, 16.5 + m_startValue*m_totalSize*(height()-33)), QPointF(width() - 1.5, 16.5 + m_endValue*m_totalSize*(height()-33)));
 	m_canvas.setBrush(QBrush(handleColor));
 	m_canvas.setPen(QPen(QBrush(handleBorderColor), 1));
 	m_canvas.drawRoundedRect(handle, 0.2, 0.2);
@@ -82,6 +87,74 @@ void ModernScrollbar::paintEvent(QPaintEvent *event)
 
 void ModernScrollbar::mousePressEvent(QMouseEvent *event)
 {
+	if (m_isHorizontal)
+	{
+		if (event->x() < height())
+			tickBackward();
+		else if (event->x() > (width() - height()))
+			tickForward();
+		else
+			m_isInDragOperation = true;
+	}
+	else
+	{
+		if (event->y() < width())
+			tickBackward();
+		else if (event->y() > (height() - width()))
+			tickForward();
+		else
+			m_isInDragOperation = true;
+	}
+
+	if (m_isInDragOperation)
+		m_delta = mousePosToValue(event->pos());
+}
+
+void ModernScrollbar::mouseMoveEvent(QMouseEvent *event)
+{
+	if (m_isInDragOperation)
+	{
+		tryMoveTo(mousePosToValue(event->pos()) - m_delta);
+	}
+}
+
+void ModernScrollbar::mouseReleaseEvent(QMouseEvent *event)
+{
+	m_isInDragOperation = false;
+}
+
+float ModernScrollbar::mousePosToValue(QPoint pos)
+{
+	float pixelOffset;
+
+	if (m_isHorizontal)
+		pixelOffset = pos.x();
+	else
+		pixelOffset = pos.y();
+
+	return pixelOffset / (height() - (width() * 2));
+}
+
+void ModernScrollbar::tryMoveTo(float newStartValue)
+{
+	float currentWidth = m_endValue - m_startValue;
+
+	if (newStartValue < 0)
+	{
+		m_endValue = m_endValue - m_startValue;
+		m_startValue = 0;
+	}
+	else if (newStartValue > m_totalSize - currentWidth)
+	{
+		m_startValue = m_totalSize - currentWidth;
+		m_endValue = m_totalSize;
+	}
+	else
+	{
+		m_startValue = newStartValue;
+		m_endValue = newStartValue + currentWidth;
+	}
+	update();
 }
 
 void ModernScrollbar::setVertical()
@@ -92,6 +165,24 @@ void ModernScrollbar::setVertical()
 void ModernScrollbar::setHorizontal()
 {
 	m_isHorizontal = true;
+}
+
+void ModernScrollbar::setStart(float start)
+{
+	m_startValue = start;
+	update();
+}
+
+void ModernScrollbar::setWidth(float width)
+{
+	m_endValue = width + m_startValue;
+	update();
+}
+
+void ModernScrollbar::setTotalSize(float size)
+{
+	m_totalSize = size;
+	update();
 }
 
 void ModernScrollbar::drawArrow(QPainter* canvas, Direction direction)
@@ -132,4 +223,47 @@ void ModernScrollbar::drawArrow(QPainter* canvas, Direction direction)
 
 	canvas->setPen(QPen(QColor(137, 137, 137)));
 	canvas->fillPath(path, QColor(137, 137, 137));
+}
+
+void ModernScrollbar::tickForward()
+{
+	if (m_endValue + m_tickSize <= m_totalSize)
+	{
+		m_startValue += m_tickSize;
+		m_endValue += m_tickSize;
+	}
+	else
+	{
+		if (qAbs(m_totalSize - m_endValue) < 0.0005)
+			return;
+
+		float actualTickSize = m_totalSize - m_endValue;
+
+		m_startValue += actualTickSize;
+		m_endValue += actualTickSize;
+	}
+	update();
+}
+
+void ModernScrollbar::tickBackward()
+{
+	if (m_startValue - m_tickSize >= 0)
+	{
+		m_startValue -= m_tickSize;
+		m_endValue -= m_tickSize;
+	}
+	else
+	{
+		if (m_startValue < 0.0005)
+			return;
+
+		m_startValue -= m_startValue;
+		m_endValue += m_startValue;
+	}
+	update();
+}
+
+void ModernScrollbar::setMinimumScrollbarWidth(float width)
+{
+	m_minimumWidth = width;
 }
