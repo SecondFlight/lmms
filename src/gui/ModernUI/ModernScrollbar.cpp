@@ -126,20 +126,32 @@ void ModernScrollbar::mousePressEvent(QMouseEvent *event)
 	{
 		m_delta = mousePosToValue(event->pos()) - m_startValue;
 		m_isInStartMoveOperation = true;
-		return;
 	}
-
-	if (m_isHandleResizingEnabled && qAbs(valueToPixels(mousePosValue) - valueToPixels(m_endValue)) < 3)
+	else if (m_isHandleResizingEnabled && qAbs(valueToPixels(mousePosValue) - valueToPixels(m_endValue)) < 3)
 	{
 		m_delta = mousePosToValue(event->pos()) - m_endValue;
 		m_isInEndMoveOperation = true;
-		return;
 	}
-
-	if (mousePosValue > m_startValue && mousePosValue < m_endValue)
+	else if (mousePosValue > m_startValue && mousePosValue < m_endValue)
 	{
 		m_delta = mousePosToValue(event->pos()) - m_startValue;
 		m_isInDragOperation = true;
+	}
+	// At this point we've ruled everything out except pageup/pagedown
+	else
+	{
+		float delta = m_endValue - m_startValue;
+		if (mousePosValue > m_endValue)
+		{
+			m_startValue += delta;
+			m_endValue += delta;
+		}
+		else if (mousePosValue < m_startValue)
+		{
+			m_startValue -= delta;
+			m_endValue -= delta;
+		}
+		update();
 	}
 }
 

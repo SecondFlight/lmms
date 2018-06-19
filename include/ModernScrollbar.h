@@ -72,11 +72,11 @@ private:
 	float m_totalSize;
 	float m_tickSize;
 	float m_minimumWidth;
+	float m_delta;
 	bool m_isInDragOperation;
 	bool m_isInStartMoveOperation;
 	bool m_isInEndMoveOperation;
 	bool m_isHandleResizingEnabled;
-	float m_delta;
 	void drawArrow(QPainter *canvas, Direction direction);
 	float mousePosToValue(QPoint pos);
 	float valueToPixels(float value);
