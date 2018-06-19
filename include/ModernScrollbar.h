@@ -53,7 +53,10 @@ public:
 	void tickForward();
 	void tickBackward();
 	void tryMoveTo(float newStartValue);
+	void tryMoveStartTo(float newStartValue);
+	void tryMoveEndTo(float newEndValue);
 	void setMinimumScrollbarWidth(float width);
+	void setHandleResizingEnabled(bool enabled);
 
 protected:
 	virtual void paintEvent(QPaintEvent * event);
@@ -70,9 +73,13 @@ private:
 	float m_tickSize;
 	float m_minimumWidth;
 	bool m_isInDragOperation;
+	bool m_isInStartMoveOperation;
+	bool m_isInEndMoveOperation;
+	bool m_isHandleResizingEnabled;
 	float m_delta;
 	void drawArrow(QPainter *canvas, Direction direction);
 	float mousePosToValue(QPoint pos);
+	float valueToPixels(float value);
 };
 
 #endif

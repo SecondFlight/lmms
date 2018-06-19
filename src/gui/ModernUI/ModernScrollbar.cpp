@@ -27,6 +27,7 @@
 #include "ModernScrollbar.h"
 
 #include <QMouseEvent>
+#include <QHoverEvent>
 
 ModernScrollbar::ModernScrollbar(QWidget *_parent, const QString &_name):
 	QWidget(_parent)
@@ -37,6 +38,11 @@ ModernScrollbar::ModernScrollbar(QWidget *_parent, const QString &_name):
 	m_isHorizontal = false;
 	m_tickSize = 0.05;
 	m_minimumWidth = 0.05;
+	m_isInDragOperation = false;
+	m_isInStartMoveOperation = false;
+	m_isInEndMoveOperation = false;
+	m_isHandleResizingEnabled = true;
+	this->setMouseTracking(true);
 }
 
 ModernScrollbar::~ModernScrollbar()
@@ -116,10 +122,24 @@ void ModernScrollbar::mousePressEvent(QMouseEvent *event)
 
 	float mousePosValue = mousePosToValue(event->pos());
 
+	if (m_isHandleResizingEnabled && qAbs(valueToPixels(mousePosValue) - valueToPixels(m_startValue)) < 3)
+	{
+		m_delta = mousePosToValue(event->pos()) - m_startValue;
+		m_isInStartMoveOperation = true;
+		return;
+	}
+
+	if (m_isHandleResizingEnabled && qAbs(valueToPixels(mousePosValue) - valueToPixels(m_endValue)) < 3)
+	{
+		m_delta = mousePosToValue(event->pos()) - m_endValue;
+		m_isInEndMoveOperation = true;
+		return;
+	}
+
 	if (mousePosValue > m_startValue && mousePosValue < m_endValue)
 	{
-		m_isInDragOperation = true;
 		m_delta = mousePosToValue(event->pos()) - m_startValue;
+		m_isInDragOperation = true;
 	}
 }
 
@@ -128,12 +148,41 @@ void ModernScrollbar::mouseMoveEvent(QMouseEvent *event)
 	if (m_isInDragOperation)
 	{
 		tryMoveTo(mousePosToValue(event->pos()) - m_delta);
+		return;
 	}
+
+	if (m_isInStartMoveOperation)
+	{
+		tryMoveStartTo(mousePosToValue(event->pos()) - m_delta);
+		return;
+	}
+
+	if (m_isInEndMoveOperation)
+	{
+		tryMoveEndTo(mousePosToValue(event->pos()) - m_delta);
+		return;
+	}
+
+	float mousePosValue = mousePosToValue(event->pos());
+
+	if (m_isHandleResizingEnabled &&
+			(qAbs(valueToPixels(mousePosValue) - valueToPixels(m_startValue)) < 3 ||
+			qAbs(valueToPixels(mousePosValue) - valueToPixels(m_endValue)) < 3))
+	{
+		if (m_isHorizontal)
+			this->setCursor(Qt::SizeHorCursor);
+		else
+			this->setCursor(Qt::SizeVerCursor);
+	}
+	else
+		this->setCursor(Qt::ArrowCursor);
 }
 
 void ModernScrollbar::mouseReleaseEvent(QMouseEvent *event)
 {
 	m_isInDragOperation = false;
+	m_isInStartMoveOperation = false;
+	m_isInEndMoveOperation = false;
 }
 
 float ModernScrollbar::mousePosToValue(QPoint pos)
@@ -150,6 +199,17 @@ float ModernScrollbar::mousePosToValue(QPoint pos)
 		pixelOffset = pos.y();
 		return (pixelOffset - width()) / (height() - (width() * 2));
 	}
+}
+
+float ModernScrollbar::valueToPixels(float value)
+{
+	int scrollbarSize;
+	if (m_isHorizontal)
+		scrollbarSize = width() - (height() * 2);
+	else
+		scrollbarSize = height() - (width() * 2);
+
+	return (value * scrollbarSize) / m_totalSize;
 }
 
 void ModernScrollbar::tryMoveTo(float newStartValue)
@@ -171,6 +231,28 @@ void ModernScrollbar::tryMoveTo(float newStartValue)
 		m_startValue = newStartValue;
 		m_endValue = newStartValue + currentWidth;
 	}
+	update();
+}
+
+void ModernScrollbar::tryMoveStartTo(float newStartValue)
+{
+	if (newStartValue < 0)
+		m_startValue = 0;
+	else if (newStartValue > (m_endValue - m_minimumWidth))
+		m_startValue = m_endValue - m_minimumWidth;
+	else
+		m_startValue = newStartValue;
+	update();
+}
+
+void ModernScrollbar::tryMoveEndTo(float newEndValue)
+{
+	if (newEndValue > m_totalSize)
+		m_endValue = m_totalSize;
+	else if (newEndValue < (m_startValue + m_minimumWidth))
+		m_endValue = m_startValue + m_minimumWidth;
+	else
+		m_endValue = newEndValue;
 	update();
 }
 
@@ -283,4 +365,9 @@ void ModernScrollbar::tickBackward()
 void ModernScrollbar::setMinimumScrollbarWidth(float width)
 {
 	m_minimumWidth = width;
+}
+
+void ModernScrollbar::setHandleResizingEnabled(bool enabled)
+{
+	m_isHandleResizingEnabled = enabled;
 }
