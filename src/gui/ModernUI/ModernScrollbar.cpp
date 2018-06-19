@@ -356,8 +356,8 @@ void ModernScrollbar::tickBackward()
 		if (m_startValue < 0.0005)
 			return;
 
+		m_endValue -= m_startValue;
 		m_startValue -= m_startValue;
-		m_endValue += m_startValue;
 	}
 	update();
 }
