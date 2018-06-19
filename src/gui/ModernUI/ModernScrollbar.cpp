@@ -90,24 +90,37 @@ void ModernScrollbar::mousePressEvent(QMouseEvent *event)
 	if (m_isHorizontal)
 	{
 		if (event->x() < height())
+		{
 			tickBackward();
+			return;
+		}
 		else if (event->x() > (width() - height()))
+		{
 			tickForward();
-		else
-			m_isInDragOperation = true;
+			return;
+		}
 	}
 	else
 	{
 		if (event->y() < width())
+		{
 			tickBackward();
+			return;
+		}
 		else if (event->y() > (height() - width()))
+		{
 			tickForward();
-		else
-			m_isInDragOperation = true;
+			return;
+		}
 	}
 
-	if (m_isInDragOperation)
+	float mousePosValue = mousePosToValue(event->pos());
+
+	if (mousePosValue > m_startValue && mousePosValue < m_endValue)
+	{
+		m_isInDragOperation = true;
 		m_delta = mousePosToValue(event->pos()) - m_startValue;
+	}
 }
 
 void ModernScrollbar::mouseMoveEvent(QMouseEvent *event)
@@ -130,12 +143,12 @@ float ModernScrollbar::mousePosToValue(QPoint pos)
 	if (m_isHorizontal)
 	{
 		pixelOffset = pos.x();
-		return pixelOffset / (width() - (height() * 2));
+		return (pixelOffset - height()) / (width() - (height() * 2));
 	}
 	else
 	{
 		pixelOffset = pos.y();
-		return pixelOffset / (height() - (width() * 2));
+		return (pixelOffset - width()) / (height() - (width() * 2));
 	}
 }
 
