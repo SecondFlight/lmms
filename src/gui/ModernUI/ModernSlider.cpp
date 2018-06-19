@@ -36,12 +36,13 @@ ModernSlider::ModernSlider(QWidget *_parent, const QString &_name):
 
 	m_value = 0.8;
 	m_inDragOperation = false;
-	m_lazyFollower = new LazyFollower(this, 2, {m_value, 94}, {0.65, 0.65});
+	m_lazyFollower = new LazyFollower(this, 2, {m_value, s_handleInsideBackgroundShade}, {0.65, 0.65});
 	m_handleInsideColor = 94;
 }
 
 ModernSlider::~ModernSlider()
 {
+	delete m_lazyFollower;
 }
 
 void ModernSlider::paintEvent(QPaintEvent *event)

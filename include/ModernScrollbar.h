@@ -30,7 +30,9 @@
 #include <QWidget>
 #include <QPainter>
 
-class ModernScrollbar : public QWidget
+#include "LazyFollower.h"
+
+class ModernScrollbar : public QWidget, public LazyFollowable
 {
 	Q_OBJECT
 
@@ -59,27 +61,39 @@ public:
 	void setHandleResizingEnabled(bool enabled);
 
 protected:
-	virtual void paintEvent(QPaintEvent * event);
-	virtual void mousePressEvent(QMouseEvent * event);
-	virtual void mouseMoveEvent(QMouseEvent * event);
-	virtual void mouseReleaseEvent(QMouseEvent * event);
+	virtual void paintEvent(QPaintEvent* event);
+	virtual void mousePressEvent(QMouseEvent* event);
+	virtual void mouseMoveEvent(QMouseEvent* event);
+	virtual void mouseReleaseEvent(QMouseEvent* event);
+	//virtual void enterEvent(QEvent* event);
+	virtual void leaveEvent(QEvent* event);
+	virtual void setFollowValues(QVector<float> values);
 
 private:
 	QPainter m_canvas;
-	bool m_isHorizontal;
+
 	float m_startValue;
 	float m_endValue;
 	float m_totalSize;
 	float m_tickSize;
 	float m_minimumWidth;
 	float m_delta;
+	float m_handleInsideColor;
+
+	bool m_isHorizontal;
 	bool m_isInDragOperation;
 	bool m_isInStartMoveOperation;
 	bool m_isInEndMoveOperation;
 	bool m_isHandleResizingEnabled;
+
+	LazyFollower* m_lazyFollower;
+
 	void drawArrow(QPainter *canvas, Direction direction);
 	float mousePosToValue(QPoint pos);
 	float valueToPixels(float value);
+
+	static const int s_handleShade = 94;
+	static const int s_handleClickedShade = 112;
 };
 
 #endif

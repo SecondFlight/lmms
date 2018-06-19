@@ -42,11 +42,22 @@ ModernScrollbar::ModernScrollbar(QWidget *_parent, const QString &_name):
 	m_isInStartMoveOperation = false;
 	m_isInEndMoveOperation = false;
 	m_isHandleResizingEnabled = true;
+	m_handleInsideColor = s_handleShade;
+
+	m_lazyFollower = new LazyFollower(this, 1, {s_handleShade}, {0.6});
+
 	this->setMouseTracking(true);
 }
 
 ModernScrollbar::~ModernScrollbar()
 {
+	delete m_lazyFollower;
+}
+
+void ModernScrollbar::setFollowValues(QVector<float> values)
+{
+	m_handleInsideColor = values[0];
+	update();
 }
 
 void ModernScrollbar::paintEvent(QPaintEvent *event)
@@ -55,7 +66,7 @@ void ModernScrollbar::paintEvent(QPaintEvent *event)
 
 	QColor borderColor = QColor(43, 43, 43);
 	QColor backgroundColor = QColor(54, 54, 54);
-	QColor handleColor = QColor(94, 94, 94);
+	QColor handleColor = QColor(m_handleInsideColor, m_handleInsideColor, m_handleInsideColor);
 	QColor handleBorderColor = QColor(112, 112, 112);
 
 	QRect border = QRect(QPoint(0, 0), QPoint(width(), height()));
@@ -157,6 +168,14 @@ void ModernScrollbar::mousePressEvent(QMouseEvent *event)
 
 void ModernScrollbar::mouseMoveEvent(QMouseEvent *event)
 {
+	float mousePosValue = mousePosToValue(event->pos());
+
+	if (m_isInDragOperation || m_isInStartMoveOperation || m_isInEndMoveOperation ||
+			(mousePosValue > m_startValue && mousePosValue < m_endValue))
+		m_lazyFollower->updateTarget(0, s_handleClickedShade);
+	else
+		m_lazyFollower->updateTarget(0, s_handleShade);
+
 	if (m_isInDragOperation)
 	{
 		tryMoveTo(mousePosToValue(event->pos()) - m_delta);
@@ -175,8 +194,6 @@ void ModernScrollbar::mouseMoveEvent(QMouseEvent *event)
 		return;
 	}
 
-	float mousePosValue = mousePosToValue(event->pos());
-
 	if (m_isHandleResizingEnabled &&
 			(qAbs(valueToPixels(mousePosValue) - valueToPixels(m_startValue)) < 3 ||
 			qAbs(valueToPixels(mousePosValue) - valueToPixels(m_endValue)) < 3))
@@ -185,6 +202,7 @@ void ModernScrollbar::mouseMoveEvent(QMouseEvent *event)
 			this->setCursor(Qt::SizeHorCursor);
 		else
 			this->setCursor(Qt::SizeVerCursor);
+		m_lazyFollower->updateTarget(0, s_handleClickedShade);
 	}
 	else
 		this->setCursor(Qt::ArrowCursor);
@@ -195,6 +213,16 @@ void ModernScrollbar::mouseReleaseEvent(QMouseEvent *event)
 	m_isInDragOperation = false;
 	m_isInStartMoveOperation = false;
 	m_isInEndMoveOperation = false;
+}
+
+/*void ModernScrollbar::enterEvent(QEvent *event)
+{
+
+}*/
+
+void ModernScrollbar::leaveEvent(QEvent *event)
+{
+	m_lazyFollower->updateTarget(0, s_handleShade);
 }
 
 float ModernScrollbar::mousePosToValue(QPoint pos)
