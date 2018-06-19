@@ -154,11 +154,15 @@ void ModernScrollbar::mousePressEvent(QMouseEvent *event)
 		float delta = m_endValue - m_startValue;
 		if (mousePosValue > m_endValue)
 		{
+			if (m_endValue + delta > m_totalSize)
+				delta = m_totalSize - m_endValue;
 			m_startValue += delta;
 			m_endValue += delta;
 		}
 		else if (mousePosValue < m_startValue)
 		{
+			if (m_startValue - delta < 0)
+				delta = m_startValue;
 			m_startValue -= delta;
 			m_endValue -= delta;
 		}
