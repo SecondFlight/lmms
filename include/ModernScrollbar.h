@@ -65,7 +65,6 @@ protected:
 	virtual void mousePressEvent(QMouseEvent* event);
 	virtual void mouseMoveEvent(QMouseEvent* event);
 	virtual void mouseReleaseEvent(QMouseEvent* event);
-	//virtual void enterEvent(QEvent* event);
 	virtual void leaveEvent(QEvent* event);
 	virtual void setFollowValues(QVector<float> values);
 
@@ -79,6 +78,8 @@ private:
 	float m_minimumWidth;
 	float m_delta;
 	float m_handleInsideColor;
+	float m_forwardButtonOpacity;
+	float m_backwardButtonOpacity;
 
 	bool m_isHorizontal;
 	bool m_isInDragOperation;

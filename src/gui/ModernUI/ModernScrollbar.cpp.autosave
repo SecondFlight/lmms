@@ -105,7 +105,7 @@ void ModernScrollbar::paintEvent(QPaintEvent *event)
 	m_canvas.drawRoundedRect(forwardBtn, 1, 1);
 
 	m_canvas.setBrush(QColor(shade, shade, shade, m_forwardButtonOpacity));
-	m_canvas.drawRoundedRect(backwardBtn, 1, 1);
+	m_canvas.drawRoundedRect(backwardBtn, 1, 1\);
 
 	if (m_isHorizontal)
 	{
