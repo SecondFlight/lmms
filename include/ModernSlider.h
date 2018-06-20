@@ -50,6 +50,7 @@ private:
 	float m_value;
 	float m_handleInsideColor;
 	int getHandleTop();
+	float getScaleFactor();
 	bool m_inDragOperation;
 	float m_mouseDistanceFromHandleTop;
 	LazyFollower* m_lazyFollower;

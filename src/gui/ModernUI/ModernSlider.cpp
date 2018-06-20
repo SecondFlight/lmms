@@ -29,11 +29,6 @@
 ModernSlider::ModernSlider(QWidget *_parent, const QString &_name):
 	QWidget(_parent)
 {
-	// You know, these should probably go in a constants file somewhere
-	setMaximumWidth(18);
-	setMinimumWidth(18);
-	// height is to be set by whatever is creating the widget
-
 	m_value = 0.8;
 	m_inDragOperation = false;
 	m_lazyFollower = new LazyFollower(this, 2, {m_value, s_handleInsideBackgroundShade}, {0.65, 0.65});
@@ -49,17 +44,18 @@ void ModernSlider::paintEvent(QPaintEvent *event)
 {
 	QPainter m_canvas(this);
 
-	float handleTop = getHandleTop();
-
-
+	float yScaleFactor = getScaleFactor();
+	float handleTop = getHandleTop()*yScaleFactor;
+	m_canvas.scale(width()/(float)s_handleWidth, width()/(float)s_handleWidth);
 
 	// background groove
-	QRect grooveBackground = QRect(QPoint(s_handleWidth/2 - 2, 0), QSize(4, height()));
+	QRect grooveBackground = QRect(QPoint(s_handleWidth/2 - 2, 0), QSize(4, height() * yScaleFactor));
 	m_canvas.setBrush(QBrush(QColor(43, 43, 43)));
 	m_canvas.setPen(Qt::NoPen);
 	m_canvas.drawRect(grooveBackground);
 
-	QRect grooveHighlight = QRect(QPoint(s_handleWidth/2 - 1, handleTop + s_handleHeight/2), QPoint(s_handleWidth/2, height() - 2));	m_canvas.setBrush(QBrush(QColor(25, 126, 96)));
+	QRect grooveHighlight = QRect(QPoint(s_handleWidth/2 - 1, handleTop + s_handleHeight/2), QPoint(s_handleWidth/2, height() * yScaleFactor - 2));
+	m_canvas.setBrush(QBrush(QColor(25, 126, 96)));
 	m_canvas.drawRect(grooveHighlight);
 
 
@@ -85,7 +81,7 @@ void ModernSlider::mousePressEvent(QMouseEvent *event)
 {
 	float handleTop = getHandleTop();
 	float yVal = event->y();
-	float handleBottom = handleTop + s_handleHeight;
+	float handleBottom = handleTop + s_handleHeight*(1/getScaleFactor());
 	if (yVal > handleTop && yVal < handleBottom)
 	{
 		m_inDragOperation = true;
@@ -101,7 +97,7 @@ void ModernSlider::mouseMoveEvent(QMouseEvent *event)
 	{
 		float y = event->y();
 		float h = height();
-		float potentialNewValue = (y - m_mouseDistanceFromHandleTop)/(h - s_handleHeight);
+		float potentialNewValue = (y - m_mouseDistanceFromHandleTop)/(h - s_handleHeight*(1/getScaleFactor()));
 		if (potentialNewValue > 1)
 			m_lazyFollower->updateTarget(0, 1);
 		else if (potentialNewValue < 0)
@@ -128,5 +124,10 @@ void ModernSlider::setFollowValues(QVector<float> values)
 
 int ModernSlider::getHandleTop()
 {
-	return qRound(((height() - s_handleHeight)) * m_value);
+	return qRound(((height() - s_handleHeight*(1/getScaleFactor()))) * m_value);
+}
+
+float ModernSlider::getScaleFactor()
+{
+	return s_handleWidth/(float)width();
 }
