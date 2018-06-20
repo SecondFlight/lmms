@@ -31,6 +31,7 @@
 #include "ModernToggleSwitch.h"
 #include "ModernSlider.h"
 #include "ModernButton.h"
+#include "ModernScrollbar.h"
 
 
 GuiTestControlDialog::GuiTestControlDialog(GuiTestControls *controls):
@@ -151,4 +152,26 @@ GuiTestControlDialog::GuiTestControlDialog(GuiTestControls *controls):
 	button4->adjustSize();
 	button4->move(113, 20);
 	button4->setText("+ Peak");
+
+	ModernScrollbar* scrollbar1 = new ModernScrollbar(this);
+	scrollbar1->setMaximumHeight(347);
+	scrollbar1->setMinimumHeight(347);
+	scrollbar1->setMaximumWidth(16);
+	scrollbar1->setMinimumWidth(16);
+	scrollbar1->adjustSize();
+	scrollbar1->move(800, 20);
+	scrollbar1->setVertical();
+	scrollbar1->setStart(0);
+	scrollbar1->setWidth(0.1);
+
+	ModernScrollbar* scrollbar2 = new ModernScrollbar(this);
+	scrollbar2->setMaximumHeight(16);
+	scrollbar2->setMinimumHeight(16);
+	scrollbar2->setMaximumWidth(347);
+	scrollbar2->setMinimumWidth(347);
+	scrollbar2->adjustSize();
+	scrollbar2->move(20, 700);
+	scrollbar2->setHorizontal();
+	scrollbar2->setStart(0.2);
+	scrollbar2->setWidth(0.3);
 }
