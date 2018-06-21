@@ -36,7 +36,7 @@ ModernSlider::ModernSlider(QWidget *_parent, const QString &_name):
 	m_handleOutsideColorLight = s_handleOutsideColorLight;
 	m_handleOutsideColorDark = s_handleOutsideColorDark;
 	m_handleSquish = 1 - (s_handleHeight - 3)/(float)s_handleHeight;
-	m_lazyFollower = new LazyFollower(this, 6, {m_value, m_handleInsideColorLight, m_handleInsideColorDark, m_handleOutsideColorLight, m_handleOutsideColorDark, m_handleSquish}, {0.6, 0.6, 0.6, 0.6, 0.6, 0.8});
+	m_lazyFollower = new LazyFollower(this, 6, {m_value, m_handleInsideColorLight, m_handleInsideColorDark, m_handleOutsideColorLight, m_handleOutsideColorDark, m_handleSquish}, {0.6, 0.6, 0.6, 0.6, 0.6, 0.85});
 	m_highlightColor = QColor(22, 156, 116);
 	setMouseTracking(true);
 }
