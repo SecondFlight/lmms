@@ -48,7 +48,7 @@ ModernScrollbar::ModernScrollbar(QWidget *_parent, const QString &_name):
 
 	m_lazyFollower = new LazyFollower(this, 3, {s_handleShade, 0, 0}, {0.6, 0.6, 0.6});
 
-	this->setMouseTracking(true);
+	setMouseTracking(true);
 }
 
 ModernScrollbar::~ModernScrollbar()

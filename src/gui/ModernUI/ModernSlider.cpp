@@ -31,8 +31,14 @@ ModernSlider::ModernSlider(QWidget *_parent, const QString &_name):
 {
 	m_value = 0.8;
 	m_inDragOperation = false;
-	m_lazyFollower = new LazyFollower(this, 2, {m_value, s_handleInsideBackgroundShade}, {0.65, 0.65});
-	m_handleInsideColor = 94;
+	m_handleInsideColorLight = s_handleInsideColorLight;
+	m_handleInsideColorDark = s_handleInsideColorDark;
+	m_handleOutsideColorLight = s_handleOutsideColorLight;
+	m_handleOutsideColorDark = s_handleOutsideColorDark;
+	m_handleSquish = 1 - (s_handleHeight - 3)/(float)s_handleHeight;
+	m_lazyFollower = new LazyFollower(this, 6, {m_value, m_handleInsideColorLight, m_handleInsideColorDark, m_handleOutsideColorLight, m_handleOutsideColorDark, m_handleSquish}, {0.6, 0.6, 0.6, 0.6, 0.6, 0.8});
+	m_highlightColor = QColor(22, 156, 116);
+	setMouseTracking(true);
 }
 
 ModernSlider::~ModernSlider()
@@ -55,7 +61,7 @@ void ModernSlider::paintEvent(QPaintEvent *event)
 	m_canvas.drawRect(grooveBackground);
 
 	QRect grooveHighlight = QRect(QPoint(s_handleWidth/2 - 1, handleTop + s_handleHeight/2), QPoint(s_handleWidth/2, height() * yScaleFactor - 2));
-	m_canvas.setBrush(QBrush(QColor(25, 126, 96)));
+	m_canvas.setBrush(QBrush(m_highlightColor));
 	m_canvas.drawRect(grooveHighlight);
 
 
@@ -67,28 +73,40 @@ void ModernSlider::paintEvent(QPaintEvent *event)
 	m_canvas.setBrush(QBrush(QColor(43, 43, 43)));
 	m_canvas.drawRoundedRect(handleBackground, 1, 1);
 
-	QRectF handleInside = QRectF(QPointF(1.5, handleTop + 1.5), QSizeF(s_handleWidth - 3, s_handleHeight - 3));
-	int shade = m_handleInsideColor;
-	m_canvas.setBrush(QBrush(QColor(shade, shade, shade)));
-	m_canvas.setPen(QPen(QBrush(QColor(112, 112, 112)), 1));
-	m_canvas.drawRoundedRect(handleInside, 0.25, 0.25);
+	QRectF handleOutside = QRectF(QPointF(1, handleTop + 1), QSizeF(s_handleWidth - 2, s_handleHeight - 2));
+	QLinearGradient handleOutsideGrad = QLinearGradient(QPointF(0, handleTop), QPointF(0, handleTop + s_handleHeight));
+	handleOutsideGrad.setColorAt(0, QColor(m_handleOutsideColorLight, m_handleOutsideColorLight, m_handleOutsideColorLight));
+	handleOutsideGrad.setColorAt(1, QColor(m_handleOutsideColorDark, m_handleOutsideColorDark, m_handleOutsideColorDark));
+	m_canvas.setBrush(QBrush(handleOutsideGrad));
+	m_canvas.drawRoundedRect(handleOutside, 1, 1);
 
-	m_canvas.setPen(QPen(QBrush(QColor(202, 202, 202)), 1));
-	m_canvas.drawLine(QPointF(3.5, handleTop + s_handleHeight/2 + 0.5), QPointF(s_handleWidth - 3.5, handleTop + s_handleHeight/2 + 0.5));
+	QRectF handleInside = QRectF(QPointF(1, handleTop + s_handleHeight*m_handleSquish), QPointF(s_handleWidth - 1, handleTop + s_handleHeight - (m_handleSquish*s_handleHeight)));
+	int lightShade = m_handleInsideColorLight;
+	int darkShade = m_handleInsideColorDark;
+	QLinearGradient handleInsideGrad = QLinearGradient(QPointF(0, handleTop + (m_handleSquish*s_handleHeight)), QPointF(0, handleTop + s_handleHeight - (m_handleSquish*s_handleHeight)));
+	handleInsideGrad.setColorAt(0, QColor(darkShade, darkShade, darkShade));
+	handleInsideGrad.setColorAt(0.5, QColor(lightShade, lightShade, lightShade));
+	handleInsideGrad.setColorAt(1, QColor(darkShade, darkShade, darkShade));
+	m_canvas.setBrush(QBrush(handleInsideGrad));
+	m_canvas.drawRoundedRect(handleInside, 1, 1);
+
+	m_canvas.setPen(QPen(QBrush(m_highlightColor), 1));
+	m_canvas.drawLine(QPointF(1.5, handleTop + s_handleHeight/2 + 0.5), QPointF(s_handleWidth - 1.5, handleTop + s_handleHeight/2 + 0.5));
 }
 
 void ModernSlider::mousePressEvent(QMouseEvent *event)
 {
-	float handleTop = getHandleTop();
-	float yVal = event->y();
-	float handleBottom = handleTop + s_handleHeight*(1/getScaleFactor());
-	if (yVal > handleTop && yVal < handleBottom)
+	if (isMouseYInsideHandle(event->y()))
 	{
+		int handleTop = getHandleTop();
 		m_inDragOperation = true;
 		m_mouseDistanceFromHandleTop = event->y() - handleTop;
+		m_lazyFollower->updateTarget(1, s_handleInsideColorLightClicked);
+		m_lazyFollower->updateTarget(2, s_handleInsideColorDarkClicked);
+		m_lazyFollower->updateTarget(3, s_handleOutsideColorLightClicked);
+		m_lazyFollower->updateTarget(4, s_handleOutsideColorDarkClicked);
 	}
 	update();
-	m_lazyFollower->updateTarget(1, s_handleInsideBackgroundClickedShade);
 }
 
 void ModernSlider::mouseMoveEvent(QMouseEvent *event)
@@ -105,20 +123,46 @@ void ModernSlider::mouseMoveEvent(QMouseEvent *event)
 		else
 			m_lazyFollower->updateTarget(0, potentialNewValue);
 	}
-	update();
+	if (isMouseYInsideHandle(event->y()))
+	{
+		m_lazyFollower->updateTarget(5, 1 - (s_handleHeight - 5)/(float)s_handleHeight);
+	}
+	else
+	{
+		m_lazyFollower->updateTarget(5, 1 - (s_handleHeight - 3)/(float)s_handleHeight);
+	}
 }
 
 void ModernSlider::mouseReleaseEvent(QMouseEvent *event)
 {
 	m_inDragOperation = false;
-	m_lazyFollower->updateTarget(1, s_handleInsideBackgroundShade);
+	m_lazyFollower->updateTarget(1, s_handleInsideColorLight);
+	m_lazyFollower->updateTarget(2, s_handleInsideColorDark);
+	m_lazyFollower->updateTarget(3, s_handleOutsideColorLight);
+	m_lazyFollower->updateTarget(4, s_handleOutsideColorDark);
 	update();
+}
+
+void ModernSlider::leaveEvent(QEvent *event)
+{
+	m_lazyFollower->updateTarget(5, 1 - (s_handleHeight - 3)/(float)s_handleHeight);
+}
+
+bool ModernSlider::isMouseYInsideHandle(int y)
+{
+	float handleTop = getHandleTop();
+	float handleBottom = handleTop + s_handleHeight*(1/getScaleFactor());
+	return y > handleTop && y < handleBottom;
 }
 
 void ModernSlider::setFollowValues(QVector<float> values)
 {
 	m_value = values[0];
-	m_handleInsideColor = values[1];
+	m_handleInsideColorLight = values[1];
+	m_handleInsideColorDark = values[2];
+	m_handleOutsideColorLight = values[3];
+	m_handleOutsideColorDark = values[4];
+	m_handleSquish = values[5];
 	update();
 }
 
@@ -130,4 +174,16 @@ int ModernSlider::getHandleTop()
 float ModernSlider::getScaleFactor()
 {
 	return s_handleWidth/(float)width();
+}
+
+void ModernSlider::setMuted()
+{
+	m_highlightColor = QColor(49, 49, 49);
+	update();
+}
+
+void ModernSlider::setUnmuted()
+{
+	m_highlightColor = QColor(22, 156, 116);
+	update();
 }
