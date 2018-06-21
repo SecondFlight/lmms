@@ -37,25 +37,41 @@ class ModernSlider : public QWidget, public LazyFollowable
 public:
 	ModernSlider(QWidget * _parent = NULL, const QString & _name = QString());
 	virtual ~ModernSlider();
+	void setMuted();
+	void setUnmuted();
 
 protected:
 	virtual void paintEvent(QPaintEvent * event);
 	virtual void mousePressEvent(QMouseEvent * event);
 	virtual void mouseMoveEvent(QMouseEvent * event);
 	virtual void mouseReleaseEvent(QMouseEvent * event);
+	virtual void leaveEvent(QEvent * event);
 	virtual void setFollowValues(QVector<float> values);
 
 private:
 	QPainter m_canvas;
 	float m_value;
-	float m_handleInsideColor;
+	float m_handleInsideColorLight;
+	float m_handleInsideColorDark;
+	float m_handleOutsideColorLight;
+	float m_handleOutsideColorDark;
+	float m_handleSquish;
 	int getHandleTop();
+	float getScaleFactor();
+	bool isMouseYInsideHandle(int y);
 	bool m_inDragOperation;
 	float m_mouseDistanceFromHandleTop;
 	LazyFollower* m_lazyFollower;
+	QColor m_highlightColor;
 
 	static const int s_handleHeight = 31;
 	static const int s_handleWidth = 18;
-	static const int s_handleInsideBackgroundShade = 94;
-	static const int s_handleInsideBackgroundClickedShade = 112;
+	static const int s_handleInsideColorLight = 94;
+	static const int s_handleInsideColorLightClicked = 102;
+	static const int s_handleInsideColorDark = 79;
+	static const int s_handleInsideColorDarkClicked = 91;
+	static const int s_handleOutsideColorLight = 98;
+	static const int s_handleOutsideColorLightClicked = 113;
+	static const int s_handleOutsideColorDark = 84;
+	static const int s_handleOutsideColorDarkClicked = 97;
 };

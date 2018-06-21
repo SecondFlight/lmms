@@ -92,8 +92,18 @@ GuiTestControlDialog::GuiTestControlDialog(GuiTestControls *controls):
 	ModernSlider* slider1 = new ModernSlider(this);
 	slider1->setMaximumHeight(105);
 	slider1->setMinimumHeight(105);
+	slider1->setMaximumWidth(18);
+	slider1->setMinimumWidth(18);
 	slider1->adjustSize();
 	slider1->move(500, 100);
+
+	ModernSlider* slider2 = new ModernSlider(this);
+	slider2->setMaximumHeight(315);
+	slider2->setMinimumHeight(315);
+	slider2->setMaximumWidth(54);
+	slider2->setMinimumWidth(54);
+	slider2->adjustSize();
+	slider2->move(550, 80);
 
 	m_volumeMeter1 = new ModernVolumeMeter(this);
 	m_volumeMeter1->setMaximumHeight(105);
