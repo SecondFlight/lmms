@@ -68,10 +68,10 @@ private:
 	static const int s_handleWidth = 18;
 	static const int s_handleInsideColorLight = 94;
 	static const int s_handleInsideColorLightClicked = 102;
-	static const int s_handleInsideColorDark = 79;
-	static const int s_handleInsideColorDarkClicked = 91;
-	static const int s_handleOutsideColorLight = 98;
-	static const int s_handleOutsideColorLightClicked = 113;
+	static const int s_handleInsideColorDark = 73;
+	static const int s_handleInsideColorDarkClicked = 85;
+	static const int s_handleOutsideColorLight = 101;
+	static const int s_handleOutsideColorLightClicked = 116;
 	static const int s_handleOutsideColorDark = 84;
 	static const int s_handleOutsideColorDarkClicked = 97;
 };

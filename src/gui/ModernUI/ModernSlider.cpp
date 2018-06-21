@@ -71,22 +71,26 @@ void ModernSlider::paintEvent(QPaintEvent *event)
 
 	QRectF handleBackground = QRectF(QPointF(0, handleTop), QSizeF(s_handleWidth, s_handleHeight));
 	m_canvas.setBrush(QBrush(QColor(43, 43, 43)));
-	m_canvas.drawRoundedRect(handleBackground, 1, 1);
+	m_canvas.drawRoundedRect(handleBackground, 2, 2);
 
 	QRectF handleOutside = QRectF(QPointF(1, handleTop + 1), QSizeF(s_handleWidth - 2, s_handleHeight - 2));
 	QLinearGradient handleOutsideGrad = QLinearGradient(QPointF(0, handleTop), QPointF(0, handleTop + s_handleHeight));
 	handleOutsideGrad.setColorAt(0, QColor(m_handleOutsideColorLight, m_handleOutsideColorLight, m_handleOutsideColorLight));
 	handleOutsideGrad.setColorAt(1, QColor(m_handleOutsideColorDark, m_handleOutsideColorDark, m_handleOutsideColorDark));
 	m_canvas.setBrush(QBrush(handleOutsideGrad));
-	m_canvas.drawRoundedRect(handleOutside, 1, 1);
+	m_canvas.drawRoundedRect(handleOutside, 2, 2);
 
 	QRectF handleInside = QRectF(QPointF(1, handleTop + s_handleHeight*m_handleSquish), QPointF(s_handleWidth - 1, handleTop + s_handleHeight - (m_handleSquish*s_handleHeight)));
 	int lightShade = m_handleInsideColorLight;
 	int darkShade = m_handleInsideColorDark;
 	QLinearGradient handleInsideGrad = QLinearGradient(QPointF(0, handleTop + (m_handleSquish*s_handleHeight)), QPointF(0, handleTop + s_handleHeight - (m_handleSquish*s_handleHeight)));
-	handleInsideGrad.setColorAt(0, QColor(darkShade, darkShade, darkShade));
+
+	// Slight color increase for the top of the handle inside
+	// yay shading
+	handleInsideGrad.setColorAt(0, QColor(darkShade + 5, darkShade + 5, darkShade + 5));
 	handleInsideGrad.setColorAt(0.5, QColor(lightShade, lightShade, lightShade));
 	handleInsideGrad.setColorAt(1, QColor(darkShade, darkShade, darkShade));
+
 	m_canvas.setBrush(QBrush(handleInsideGrad));
 	m_canvas.drawRoundedRect(handleInside, 1, 1);
 
