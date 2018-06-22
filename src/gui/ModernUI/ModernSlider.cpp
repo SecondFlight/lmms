@@ -150,8 +150,12 @@ void ModernSlider::mouseReleaseEvent(QMouseEvent *event)
 
 		// Set cursor position to the middle of the handle
 		QCursor c = cursor();
-		float scaleFactor = 1 - getScaleFactor();
-		c.setPos(this->mapToGlobal(QPoint(width()/2, (s_handleHeight/scaleFactor) + (1 - m_value)*height()*scaleFactor)));
+		float scaleFactor = getScaleFactor();
+
+		float handleHeight = s_handleHeight/scaleFactor;
+
+		auto y = handleHeight*0.5 + (1 - m_value) * (height() - handleHeight);
+		c.setPos(this->mapToGlobal(QPoint(width()/2, y)));
 		setCursor(c);
 	}
 
