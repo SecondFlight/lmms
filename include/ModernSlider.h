@@ -61,8 +61,10 @@ private:
 	bool isMouseYInsideHandle(int y);
 	bool m_inDragOperation;
 	float m_mouseDistanceFromHandleTop;
+	float m_potentialNewValue;
 	LazyFollower* m_lazyFollower;
 	QColor m_highlightColor;
+	QPoint m_storedCursorPos;
 
 	static const int s_handleHeight = 31;
 	static const int s_handleWidth = 18;
@@ -74,4 +76,6 @@ private:
 	static const int s_handleOutsideColorLightClicked = 116;
 	static const int s_handleOutsideColorDark = 84;
 	static const int s_handleOutsideColorDarkClicked = 97;
+
+	constexpr static const float s_movementScalingFactor = 1/700.0;
 };

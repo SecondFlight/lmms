@@ -102,6 +102,9 @@ void ModernSlider::mousePressEvent(QMouseEvent *event)
 {
 	if (isMouseYInsideHandle(event->y()))
 	{
+		this->setCursor(Qt::BlankCursor);
+		m_storedCursorPos = cursor().pos();
+		m_potentialNewValue = m_value;
 		int handleTop = getHandleTop();
 		m_inDragOperation = true;
 		m_mouseDistanceFromHandleTop = event->y() - handleTop;
@@ -117,16 +120,19 @@ void ModernSlider::mouseMoveEvent(QMouseEvent *event)
 {
 	if (m_inDragOperation)
 	{
-		float y = event->y();
-		float h = height();
-		float potentialNewValue = (y - m_mouseDistanceFromHandleTop)/(h - s_handleHeight*(1/getScaleFactor()));
-		if (potentialNewValue > 1)
+		float delta = m_storedCursorPos.y() - cursor().pos().y();
+		QCursor c = cursor();
+		c.setPos(m_storedCursorPos);
+		setCursor(c);
+		m_potentialNewValue += delta*s_movementScalingFactor;
+		if (m_potentialNewValue > 1)
 			m_lazyFollower->updateTarget(0, 1);
-		else if (potentialNewValue < 0)
+		else if (m_potentialNewValue < 0)
 			m_lazyFollower->updateTarget(0, 0);
 		else
-			m_lazyFollower->updateTarget(0, potentialNewValue);
+			m_lazyFollower->updateTarget(0, m_potentialNewValue);
 	}
+
 	if (isMouseYInsideHandle(event->y()))
 	{
 		m_lazyFollower->updateTarget(5, 1 - (s_handleHeight - 5)/(float)s_handleHeight);
@@ -139,6 +145,14 @@ void ModernSlider::mouseMoveEvent(QMouseEvent *event)
 
 void ModernSlider::mouseReleaseEvent(QMouseEvent *event)
 {
+	this->setCursor(Qt::ArrowCursor);
+
+	// Set cursor position to the middle of the handle
+	QCursor c = cursor();
+	float scaleFactor = 1 - getScaleFactor();
+	c.setPos(this->mapToGlobal(QPoint(width()/2, (s_handleHeight/scaleFactor) + (1 - m_value)*height()*scaleFactor)));
+	setCursor(c);
+
 	m_inDragOperation = false;
 	m_lazyFollower->updateTarget(1, s_handleInsideColorLight);
 	m_lazyFollower->updateTarget(2, s_handleInsideColorDark);
@@ -172,7 +186,7 @@ void ModernSlider::setFollowValues(QVector<float> values)
 
 int ModernSlider::getHandleTop()
 {
-	return qRound(((height() - s_handleHeight*(1/getScaleFactor()))) * m_value);
+	return qRound(((height() - s_handleHeight*(1/getScaleFactor()))) * (1 - m_value));
 }
 
 float ModernSlider::getScaleFactor()
