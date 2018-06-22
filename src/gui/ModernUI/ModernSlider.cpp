@@ -145,13 +145,15 @@ void ModernSlider::mouseMoveEvent(QMouseEvent *event)
 
 void ModernSlider::mouseReleaseEvent(QMouseEvent *event)
 {
-	this->setCursor(Qt::ArrowCursor);
+	if (m_inDragOperation) {
+		this->setCursor(Qt::ArrowCursor);
 
-	// Set cursor position to the middle of the handle
-	QCursor c = cursor();
-	float scaleFactor = 1 - getScaleFactor();
-	c.setPos(this->mapToGlobal(QPoint(width()/2, (s_handleHeight/scaleFactor) + (1 - m_value)*height()*scaleFactor)));
-	setCursor(c);
+		// Set cursor position to the middle of the handle
+		QCursor c = cursor();
+		float scaleFactor = 1 - getScaleFactor();
+		c.setPos(this->mapToGlobal(QPoint(width()/2, (s_handleHeight/scaleFactor) + (1 - m_value)*height()*scaleFactor)));
+		setCursor(c);
+	}
 
 	m_inDragOperation = false;
 	m_lazyFollower->updateTarget(1, s_handleInsideColorLight);
