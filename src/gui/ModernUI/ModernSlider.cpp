@@ -141,7 +141,7 @@ void ModernSlider::mouseMoveEvent(QMouseEvent *event)
 			m_lazyFollower->updateTarget(0, m_potentialNewValue);
 	}
 
-	if (isMouseYInsideHandle(event->y()))
+	if (m_inDragOperation || isMouseYInsideHandle(event->y()))
 	{
 		m_lazyFollower->updateTarget(5, 1 - (s_handleHeight - 5)/(float)s_handleHeight);
 	}
