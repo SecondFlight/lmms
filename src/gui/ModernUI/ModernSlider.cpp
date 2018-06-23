@@ -160,28 +160,14 @@ void ModernSlider::updateTickValue()
 {
 	int handleTop = getHandleTop();
 	int handleBottom = handleTop + s_handleHeight/getScaleFactor();
-	float newTarget;
-	bool wasNewTargetSet = false;
 
 	if (m_mouseYForTick < handleTop)
 	{
-		newTarget = m_value + s_tickAmt;
-		wasNewTargetSet = true;
+		tickUp();
 	}
 	else if (m_mouseYForTick > handleBottom)
 	{
-		newTarget = m_value - s_tickAmt;
-		wasNewTargetSet = true;
-	}
-
-	if (wasNewTargetSet)
-	{
-		if (newTarget > 1)
-			m_lazyFollower->updateTarget(0, 1);
-		else if (newTarget < 0)
-			m_lazyFollower->updateTarget(0, 0);
-		else
-			m_lazyFollower->updateTarget(0, newTarget);
+		tickDown();
 	}
 }
 
@@ -214,6 +200,37 @@ void ModernSlider::mouseReleaseEvent(QMouseEvent *event)
 void ModernSlider::leaveEvent(QEvent *event)
 {
 	m_lazyFollower->updateTarget(5, 1 - (s_handleHeight - 3)/(float)s_handleHeight);
+}
+
+void ModernSlider::wheelEvent(QWheelEvent *event)
+{
+	float y = event->angleDelta().y();
+	if (y > 0)
+		tickUp();
+	else
+		tickDown();
+}
+
+void ModernSlider::tickUp()
+{
+	float newTarget = m_lazyFollower->getTarget(0) + s_tickAmt;
+	if (newTarget > 1)
+		m_lazyFollower->updateTarget(0, 1);
+	else if (newTarget < 0)
+		m_lazyFollower->updateTarget(0, 0);
+	else
+		m_lazyFollower->updateTarget(0, newTarget);
+}
+
+void ModernSlider::tickDown()
+{
+	float newTarget = m_lazyFollower->getTarget(0) - s_tickAmt;
+	if (newTarget > 1)
+		m_lazyFollower->updateTarget(0, 1);
+	else if (newTarget < 0)
+		m_lazyFollower->updateTarget(0, 0);
+	else
+		m_lazyFollower->updateTarget(0, newTarget);
 }
 
 bool ModernSlider::isMouseYInsideHandle(int y)

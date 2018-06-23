@@ -27,6 +27,7 @@
 #include <QWidget>
 #include <QPainter>
 #include <QMouseEvent>
+#include <QWheelEvent>
 #include <QTimer>
 
 #include "LazyFollower.h"
@@ -46,6 +47,7 @@ protected:
 	virtual void mousePressEvent(QMouseEvent * event);
 	virtual void mouseMoveEvent(QMouseEvent * event);
 	virtual void mouseReleaseEvent(QMouseEvent * event);
+	virtual void wheelEvent(QWheelEvent * event);
 	virtual void leaveEvent(QEvent * event);
 	virtual void setFollowValues(QVector<float> values);
 
@@ -63,6 +65,8 @@ private:
 	int getHandleTop();
 	float getScaleFactor();
 	bool isMouseYInsideHandle(int y);
+	void tickUp();
+	void tickDown();
 	bool m_inDragOperation;
 	int m_mouseYForTick;
 	QTimer * m_nudgeTimer;

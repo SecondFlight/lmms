@@ -43,6 +43,7 @@ public:
 	LazyFollower();
 	void updateTarget(QVector<float> inputs);
 	void updateTarget(int index, float input);
+	float getTarget(int index);
 	void setFractionPerFrame(QVector<float> fracs);
 	void setFractionPerFrame(int index, float frac);
 

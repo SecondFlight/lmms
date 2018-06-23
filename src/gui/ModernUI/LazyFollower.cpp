@@ -62,6 +62,11 @@ void LazyFollower::updateTarget(int index, float input)
 	m_stopped = false;
 }
 
+float LazyFollower::getTarget(int index)
+{
+	return m_currentTargets[index];
+}
+
 void LazyFollower::setFractionPerFrame(QVector<float> fracs)
 {
 	m_fracs = fracs;
