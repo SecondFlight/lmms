@@ -74,6 +74,7 @@ private:
 	float m_potentialNewValue;
 	LazyFollower* m_lazyFollower;
 	QColor m_highlightColor;
+	QColor m_grooveHighlightColor;
 	QPoint m_storedCursorPos;
 
 	static const int s_handleHeight = 31;

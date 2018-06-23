@@ -38,6 +38,7 @@ ModernSlider::ModernSlider(QWidget *_parent, const QString &_name):
 	m_handleSquish = 1 - (s_handleHeight - 3)/(float)s_handleHeight;
 	m_lazyFollower = new LazyFollower(this, 6, {m_value, m_handleInsideColorLight, m_handleInsideColorDark, m_handleOutsideColorLight, m_handleOutsideColorDark, m_handleSquish}, {0.62, 0.6, 0.6, 0.6, 0.6, 0.85});
 	m_highlightColor = QColor(22, 156, 116);
+	m_grooveHighlightColor = QColor(25, 126, 96);
 	m_nudgeTimer = new QTimer(this);
 	m_nudgeTimer->setInterval(70);
 	connect(m_nudgeTimer, SIGNAL(timeout()), this, SLOT(updateTickValue()));
@@ -64,7 +65,7 @@ void ModernSlider::paintEvent(QPaintEvent *event)
 	m_canvas.drawRect(grooveBackground);
 
 	QRect grooveHighlight = QRect(QPoint(s_handleWidth/2 - 1, handleTop + s_handleHeight/2), QPoint(s_handleWidth/2, height() * yScaleFactor - 2));
-	m_canvas.setBrush(QBrush(m_highlightColor));
+	m_canvas.setBrush(QBrush(m_grooveHighlightColor));
 	m_canvas.drawRect(grooveHighlight);
 
 
@@ -263,12 +264,14 @@ float ModernSlider::getScaleFactor()
 
 void ModernSlider::setMuted()
 {
-	m_highlightColor = QColor(49, 49, 49);
+	m_grooveHighlightColor = QColor(49, 49, 49);
+	m_highlightColor = QColor(43, 43, 43);
 	update();
 }
 
 void ModernSlider::setUnmuted()
 {
 	m_highlightColor = QColor(22, 156, 116);
+	m_grooveHighlightColor = QColor(25, 126, 96);
 	update();
 }
