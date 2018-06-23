@@ -36,8 +36,11 @@ ModernSlider::ModernSlider(QWidget *_parent, const QString &_name):
 	m_handleOutsideColorLight = s_handleOutsideColorLight;
 	m_handleOutsideColorDark = s_handleOutsideColorDark;
 	m_handleSquish = 1 - (s_handleHeight - 3)/(float)s_handleHeight;
-	m_lazyFollower = new LazyFollower(this, 6, {m_value, m_handleInsideColorLight, m_handleInsideColorDark, m_handleOutsideColorLight, m_handleOutsideColorDark, m_handleSquish}, {0.6, 0.6, 0.6, 0.6, 0.6, 0.85});
+	m_lazyFollower = new LazyFollower(this, 6, {m_value, m_handleInsideColorLight, m_handleInsideColorDark, m_handleOutsideColorLight, m_handleOutsideColorDark, m_handleSquish}, {0.62, 0.6, 0.6, 0.6, 0.6, 0.85});
 	m_highlightColor = QColor(22, 156, 116);
+	m_nudgeTimer = new QTimer(this);
+	m_nudgeTimer->setInterval(70);
+	connect(m_nudgeTimer, SIGNAL(timeout()), this, SLOT(updateTickValue()));
 	setMouseTracking(true);
 }
 
@@ -113,6 +116,11 @@ void ModernSlider::mousePressEvent(QMouseEvent *event)
 		m_lazyFollower->updateTarget(3, s_handleOutsideColorLightClicked);
 		m_lazyFollower->updateTarget(4, s_handleOutsideColorDarkClicked);
 	}
+	else
+	{
+		m_mouseYForTick = event->y();
+		m_nudgeTimer->start();
+	}
 	update();
 }
 
@@ -141,10 +149,46 @@ void ModernSlider::mouseMoveEvent(QMouseEvent *event)
 	{
 		m_lazyFollower->updateTarget(5, 1 - (s_handleHeight - 3)/(float)s_handleHeight);
 	}
+
+	if (m_nudgeTimer->isActive())
+	{
+		m_mouseYForTick = event->y();
+	}
+}
+
+void ModernSlider::updateTickValue()
+{
+	int handleTop = getHandleTop();
+	int handleBottom = handleTop + s_handleHeight/getScaleFactor();
+	float newTarget;
+	bool wasNewTargetSet = false;
+
+	if (m_mouseYForTick < handleTop)
+	{
+		newTarget = m_value + s_tickAmt;
+		wasNewTargetSet = true;
+	}
+	else if (m_mouseYForTick > handleBottom)
+	{
+		newTarget = m_value - s_tickAmt;
+		wasNewTargetSet = true;
+	}
+
+	if (wasNewTargetSet)
+	{
+		if (newTarget > 1)
+			m_lazyFollower->updateTarget(0, 1);
+		else if (newTarget < 0)
+			m_lazyFollower->updateTarget(0, 0);
+		else
+			m_lazyFollower->updateTarget(0, newTarget);
+	}
 }
 
 void ModernSlider::mouseReleaseEvent(QMouseEvent *event)
 {
+	m_nudgeTimer->stop();
+
 	if (m_inDragOperation) {
 		this->setCursor(Qt::ArrowCursor);
 

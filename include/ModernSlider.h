@@ -27,6 +27,7 @@
 #include <QWidget>
 #include <QPainter>
 #include <QMouseEvent>
+#include <QTimer>
 
 #include "LazyFollower.h"
 
@@ -48,6 +49,9 @@ protected:
 	virtual void leaveEvent(QEvent * event);
 	virtual void setFollowValues(QVector<float> values);
 
+protected slots:
+	void updateTickValue();
+
 private:
 	QPainter m_canvas;
 	float m_value;
@@ -60,6 +64,8 @@ private:
 	float getScaleFactor();
 	bool isMouseYInsideHandle(int y);
 	bool m_inDragOperation;
+	int m_mouseYForTick;
+	QTimer * m_nudgeTimer;
 	float m_mouseDistanceFromHandleTop;
 	float m_potentialNewValue;
 	LazyFollower* m_lazyFollower;
@@ -77,5 +83,6 @@ private:
 	static const int s_handleOutsideColorDark = 84;
 	static const int s_handleOutsideColorDarkClicked = 97;
 
-	constexpr static const float s_movementScalingFactor = 1/700.0;
+	constexpr static const float s_tickAmt = 0.05;
+	constexpr static const float s_movementScalingFactor = 1/350.0;
 };
