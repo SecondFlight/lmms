@@ -27,6 +27,8 @@
 #include <QWidget>
 #include <QPainter>
 #include <QMouseEvent>
+#include <QWheelEvent>
+#include <QTimer>
 
 #include "LazyFollower.h"
 
@@ -45,8 +47,12 @@ protected:
 	virtual void mousePressEvent(QMouseEvent * event);
 	virtual void mouseMoveEvent(QMouseEvent * event);
 	virtual void mouseReleaseEvent(QMouseEvent * event);
+	virtual void wheelEvent(QWheelEvent * event);
 	virtual void leaveEvent(QEvent * event);
 	virtual void setFollowValues(QVector<float> values);
+
+protected slots:
+	void updateTickValue();
 
 private:
 	QPainter m_canvas;
@@ -59,19 +65,29 @@ private:
 	int getHandleTop();
 	float getScaleFactor();
 	bool isMouseYInsideHandle(int y);
+	void tickUp();
+	void tickDown();
 	bool m_inDragOperation;
+	int m_mouseYForTick;
+	QTimer * m_nudgeTimer;
 	float m_mouseDistanceFromHandleTop;
+	float m_potentialNewValue;
 	LazyFollower* m_lazyFollower;
 	QColor m_highlightColor;
+	QColor m_grooveHighlightColor;
+	QPoint m_storedCursorPos;
 
 	static const int s_handleHeight = 31;
 	static const int s_handleWidth = 18;
 	static const int s_handleInsideColorLight = 94;
 	static const int s_handleInsideColorLightClicked = 102;
-	static const int s_handleInsideColorDark = 79;
-	static const int s_handleInsideColorDarkClicked = 91;
-	static const int s_handleOutsideColorLight = 98;
-	static const int s_handleOutsideColorLightClicked = 113;
+	static const int s_handleInsideColorDark = 73;
+	static const int s_handleInsideColorDarkClicked = 85;
+	static const int s_handleOutsideColorLight = 101;
+	static const int s_handleOutsideColorLightClicked = 116;
 	static const int s_handleOutsideColorDark = 84;
 	static const int s_handleOutsideColorDarkClicked = 97;
+
+	constexpr static const float s_tickAmt = 0.05;
+	constexpr static const float s_movementScalingFactor = 1/350.0;
 };
